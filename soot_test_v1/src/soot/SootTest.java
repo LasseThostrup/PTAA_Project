@@ -18,14 +18,13 @@ public class SootTest {
 		Body b = m.retrieveActiveBody();
 		System.out.println(b);
 		// Build the CFG and run the analysis
-//		UnitGraph g = new ExceptionalUnitGraph(b);
-//		HashMutablePDG pdg = new HashMutablePDG(g);
-//		// Iterate over the results
-//		Iterator i = pdg.iterator();
-//		while (i.hasNext()) {
-//			PDGNode p = (PDGNode) i.next();
-//			System.out.println(p.getBackDependets());
-//		}
+		UnitGraph g = new ExceptionalUnitGraph(b);
+		HashMutablePDG pdg = new HashMutablePDG(g);
+		// Iterate over the results
+		Iterator i = g.iterator();
+		while (i.hasNext()) {
+			System.out.println(pdg.getPDGNode(i));
+		}
 	}
 
 }
