@@ -72,7 +72,7 @@ public class Soot_test {
 			for (PDGNode succ : node.getDependets()) {
 				
 				if (!visited.contains(succ)) {
-					DotGraphNode succDotnode = dotGraph.drawNode(namer.getName(succ.toString()));
+					DotGraphNode succDotnode = dotGraph.drawNode(namer.getName(succ.toShortString()));
 					if (succ.getType() == PDGNode.Type.REGION) {
 						succDotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
 					}
@@ -80,7 +80,7 @@ public class Soot_test {
 					worklist.add(succ);
 				}
 				
-				dotGraph.drawEdge(namer.getName(node.toString()), namer.getName(succ.toString()));
+				dotGraph.drawEdge(namer.getName(node.toShortString()), namer.getName(succ.toShortString()));
  			}
 		}
 	}
