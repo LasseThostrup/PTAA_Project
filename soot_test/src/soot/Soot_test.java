@@ -24,7 +24,7 @@ public class Soot_test {
 		c.setApplicationClass();
 		SootMethod m = c.getMethodByName("foo");
 		Body b = m.retrieveActiveBody();
-		printGraph(b, "C:/Users/Lasse/Desktop");
+		printGraph(b, "output");
 	}
 	
 	public static void printGraph(Body body, String dir) {
