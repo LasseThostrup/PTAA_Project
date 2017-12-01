@@ -1,8 +1,11 @@
 package test;
 
 public class MyClass {
-
-	public int foo() {
+	public static void main(String[] args) {
+		foo();
+	}
+	
+	public static int foo() {
 		int a = 1 + 2;
 		int b = a + 3;
 		if (a > b)
@@ -11,7 +14,7 @@ public class MyClass {
 			return 2;
 	}
 	
-	public void bar() {
+	public static void bar() {
 		int x = 1;
 		if (x < 2 ) {
 			int y = 2 * x;

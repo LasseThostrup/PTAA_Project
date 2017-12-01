@@ -8,6 +8,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import soot.Body;
+import soot.jimple.toolkits.callgraph.CHATransformer;
+import soot.jimple.toolkits.callgraph.CallGraph;
+import soot.options.Options;
 import soot.toolkits.graph.pdg.EnhancedUnitGraph;
 import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
@@ -20,11 +23,19 @@ public class Soot_test {
 
 	public static void main(String[] args) {
 		System.out.println(Scene.v().getSootClassPath());
-		SootClass c = Scene.v().loadClassAndSupport("test.bar");
-		c.setApplicationClass();
-		SootMethod m = c.getMethodByName("foo");
-		Body b = m.retrieveActiveBody();
-		printGraph(b, "output");
+		Options.v().set_whole_program(true);
+		Scene s = Scene.v();
+		SootClass c = s.loadClassAndSupport("test.MyClass");
+		Scene.v().setMainClass(c);
+		s.loadNecessaryClasses();
+//		SootMethod m = c.getMethodByName("foo");
+//		Body b = m.retrieveActiveBody();
+		
+		CHATransformer.v().transform();
+
+		CallGraph cg = s.getCallGraph();
+		cg.sourceMethods();
+		//printGraph(b, "output");
 	}
 	
 	public static void printGraph(Body body, String dir) {
