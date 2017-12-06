@@ -23,11 +23,11 @@ public class Soot_test {
 
 	public static void main(String[] args) {
 		System.out.println(Scene.v().getSootClassPath());
-		Options.v().set_whole_program(true);
+		//Options.v().set_whole_program(true);
 		Scene s = Scene.v();
+		//s.loadNecessaryClasses();
 		SootClass c = s.loadClassAndSupport("test.MyClass");
 		Scene.v().setMainClass(c);
-		s.loadNecessaryClasses();
 //		SootMethod m = c.getMethodByName("foo");
 //		Body b = m.retrieveActiveBody();
 		
