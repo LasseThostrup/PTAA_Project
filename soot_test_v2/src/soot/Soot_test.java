@@ -32,7 +32,7 @@ public class Soot_test {
 		CHATransformer.v().transform();
 
 		CallGraph cg = s.getCallGraph();
-		System.out.println(cg);
+		//System.out.println(cg);
 		
 
 		Map<PDGNode, List<HashMutablePDG>> nodeToPDGmapping = new LinkedHashMap<PDGNode, List<HashMutablePDG>>();
@@ -65,9 +65,9 @@ public class Soot_test {
 		}
 		for (PDGNode pdgNode : nodeToPDGmapping.keySet()) {
 			for (HashMutablePDG lpdg : nodeToPDGmapping.get(pdgNode)) {
-				//System.out.println(pdgNode.toShortString() + "------->" + lpdg.toString());
+				System.out.println(pdgNode.toShortString() + "------->" + lpdg.toString());
 			}
-			//System.out.println();
+			System.out.println();
 		}
 
 	}

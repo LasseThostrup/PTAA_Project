@@ -20,6 +20,11 @@ public class MyClass {
 		if (x < 2) {
 			y = 2 * x;
 		}
+		calc();
 		return y;
+	}
+	
+	public static void calc() {
+		int a = 1+2;
 	}
 }
