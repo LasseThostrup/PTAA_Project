@@ -31,6 +31,7 @@ public class DotDrawer {
 		HashMutablePDG hashMutablePDG = new HashMutablePDG(exceptionalUnitGraph);
 		CFGToDotGraph pdgForMethod = new CFGToDotGraph();
 		DotGraph pdgDot = pdgForMethod.drawCFG(hashMutablePDG, body);
+		
 		pdgDot.plot(path);
 	}
 

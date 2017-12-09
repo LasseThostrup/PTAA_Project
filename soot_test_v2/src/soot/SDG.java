@@ -1,24 +1,35 @@
 package soot;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 import soot.jimple.toolkits.callgraph.CHATransformer;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.toolkits.graph.Block;
+import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
+import soot.util.cfgcmd.CFGToDotGraph;
 import soot.util.dot.DotGraph;
+import soot.util.dot.DotGraphConstants;
+import soot.util.dot.DotGraphEdge;
+import soot.util.dot.DotGraphNode;
+
 public class SDG {
 
 	LinkedHashMap<HashMutablePDG, List<SdgEdge>> connections;
 	CallGraph cg;
+	Body body;
 	
 	//Ctor
 	//What to pass here? path to bytecode dir?
@@ -29,9 +40,9 @@ public class SDG {
 		Scene.v().setMainClass(c);
 
 		SootMethod m = c.getMethodByName("foo");
-		Body b = m.retrieveActiveBody();
+		body = m.retrieveActiveBody();
 
-		UnitGraph g = new ExceptionalUnitGraph(b);
+		UnitGraph g = new ExceptionalUnitGraph(body);
 		HashMutablePDG pdg = new HashMutablePDG(g);
 
 		CHATransformer.v().transform();
@@ -86,7 +97,7 @@ public class SDG {
 							HashMutablePDG tempPdg = new HashMutablePDG(cfg);
 							
 							if (tempPdg.getNodes().size() > 1) {
-								Object toPDGNode = tempPdg.getNodes().get(0);
+								Object toPDGNode = tempPdg.GetStartNode();
 								if (toPDGNode instanceof PDGNode) {
 									
 									EdgeType edgeType = edge.passesParameters() ? EdgeType.PARAM : EdgeType.CALL;									
@@ -107,6 +118,53 @@ public class SDG {
 	}
 
 	public DotGraph toDotGraph() {
-		throw new java.lang.UnsupportedOperationException();
+		//DotNamer namer = new DotNamer(1000, 0.7f);
+		DotGraph dot = new DotGraph("System Dependence Graph");
+		int j = 0;
+		for (HashMutablePDG pdg: connections.keySet()) {
+			String name = pdg.getCFG().getBody().getMethod().getName();
+			DotGraph subGraph = dot.createSubGraph("cluster_"+name);
+			subGraph.setGraphLabel(name);
+
+			PDGNode startNode = pdg.GetStartNode();
+			Queue<PDGNode> worklist = new LinkedList<PDGNode>();
+			worklist.add(startNode);			
+			
+			DotGraphNode dotnode = subGraph.drawNode(String.valueOf(startNode.hashCode()));
+			dotnode.setLabel("Method: "+name + " " + startNode.toString().replaceAll("\\r", ""));
+			
+			if (startNode.getType() == PDGNode.Type.REGION) {
+				dotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
+			}
+			Set<PDGNode> visited = new HashSet<PDGNode>();
+			
+			
+			while (!worklist.isEmpty()) {
+				PDGNode node = worklist.poll();
+				visited.add(node);
+				
+				for (PDGNode succ : node.getDependets()) {
+					
+					if (!visited.contains(succ)) {
+						DotGraphNode succDotnode = subGraph.drawNode(String.valueOf(succ.hashCode()));
+						if (succ.getType() == PDGNode.Type.REGION) {
+							succDotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
+						}
+						succDotnode.setLabel("Method: "+name + " " + succ.toString().replaceAll("\\r", ""));
+						worklist.add(succ);
+					}
+					
+					subGraph.drawEdge(String.valueOf(node.hashCode()), String.valueOf(succ.hashCode()));
+	 			}
+			}
+		}
+		for (List<SdgEdge> edges: connections.values()) {
+			for(SdgEdge edge : edges) {
+				DotGraphEdge dotEdge = dot.drawEdge(String.valueOf(edge.from.hashCode()), String.valueOf(edge.to.hashCode()));
+				dotEdge.setLabel(edge.type.toString());
+			}
+		}
+		
+		return dot;
 	}
 }

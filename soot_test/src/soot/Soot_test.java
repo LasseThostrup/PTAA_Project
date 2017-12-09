@@ -16,26 +16,45 @@ import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
 import soot.toolkits.graph.pdg.ProgramDependenceGraph;
 import soot.util.dot.DotGraph;
+import soot.util.dot.DotGraphAttribute;
 import soot.util.dot.DotGraphConstants;
 import soot.util.dot.DotGraphNode;
 
 public class Soot_test {
 
 	public static void main(String[] args) {
-		System.out.println(Scene.v().getSootClassPath());
-		//Options.v().set_whole_program(true);
-		Scene s = Scene.v();
-		//s.loadNecessaryClasses();
-		SootClass c = s.loadClassAndSupport("test.MyClass");
-		Scene.v().setMainClass(c);
-//		SootMethod m = c.getMethodByName("foo");
-//		Body b = m.retrieveActiveBody();
-		
-		CHATransformer.v().transform();
 
-		CallGraph cg = s.getCallGraph();
-		cg.sourceMethods();
-		//printGraph(b, "output");
+		DotGraph dot = new DotGraph("System Dependence Graph");
+
+		DotGraph subGraph1 = dot.createSubGraph("SubGraph 1");
+		subGraph1.setGraphLabel("SubGraph 1");
+		subGraph1.setNodeStyle("filled");
+		subGraph1.setGraphAttribute(new DotGraphAttribute("color", "blue"));
+		DotGraph subGraph2 = dot.createSubGraph("SubGraph 2");
+		subGraph2.setGraphLabel("SubGraph 2");
+
+		subGraph1.drawEdge("A", "B").setLabel("A->B");
+		subGraph2.drawEdge("C", "D").setLabel("C->D");
+		
+		dot.drawEdge("A", "C").setLabel("A->C");
+		
+
+		dot.plot("output/dotGraphTest.dot");
+		
+		//		System.out.println(Scene.v().getSootClassPath());
+//		//Options.v().set_whole_program(true);
+//		Scene s = Scene.v();
+//		//s.loadNecessaryClasses();
+//		SootClass c = s.loadClassAndSupport("test.MyClass");
+//		Scene.v().setMainClass(c);
+////		SootMethod m = c.getMethodByName("foo");
+////		Body b = m.retrieveActiveBody();
+//		
+//		CHATransformer.v().transform();
+//
+//		CallGraph cg = s.getCallGraph();
+//		cg.sourceMethods();
+//		//printGraph(b, "output");
 	}
 	
 	public static void printGraph(Body body, String dir) {
