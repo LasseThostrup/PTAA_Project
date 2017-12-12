@@ -1,40 +1,41 @@
 digraph "System Dependence Graph" {
     subgraph "cluster_foo" {
         label="foo";
-        "880654310" [label="Method: foo Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \nb0 = 3\ni1 = b0 + 3\nif b0 <= i1 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1833564639" [label="Method: foo Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 3;\ni1 = b0 + 3;\nif b0 <= i1 goto return 2;\n",];
-        "880654310"->"1833564639";
-        "67824172" [style=filled,label="Method: foo Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i2 = staticinvoke <test.MyClass: int bar()>()\nreturn $i2\nEnd of PDG Region 1 -----------------------------\n",];
-        "1833564639"->"67824172";
-        "1218743501" [style=filled,label="Method: foo Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
-        "1833564639"->"1218743501";
-        "1602469048" [label="Method: foo Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i2 = staticinvoke <test.MyClass: int bar()>();\nreturn $i2;\n",];
-        "67824172"->"1602469048";
-        "1104872709" [label="Method: foo Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
-        "1218743501"->"1104872709";
+        "1895334381" [label="Method: foo Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \nb0 = 3\ni1 = b0 + 3\nif b0 <= i1 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "295652216" [label="Method: foo Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 3;\ni1 = b0 + 3;\nif b0 <= i1 goto return 2;\n",];
+        "1895334381"->"295652216";
+        "1185981398" [style=filled,label="Method: foo Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i2 = staticinvoke <test.MyClass: int bar()>()\nreturn $i2\nEnd of PDG Region 1 -----------------------------\n",];
+        "295652216"->"1185981398";
+        "1872305359" [style=filled,label="Method: foo Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
+        "295652216"->"1872305359";
+        "74479789" [label="Method: foo Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i2 = staticinvoke <test.MyClass: int bar()>();\nreturn $i2;\n",];
+        "1185981398"->"74479789";
+        "1946331169" [label="Method: foo Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
+        "1872305359"->"1946331169";
     }
     subgraph "cluster_bar" {
         label="bar";
-        "429877854" [label="Method: bar Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto staticinvoke <test.MyClass: void calc()>()\nstaticinvoke <test.MyClass: void calc()>()\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "807839224" [label="Method: bar Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto staticinvoke <test.MyClass: void calc()>();\n",];
-        "429877854"->"807839224";
-        "284124153" [label="Method: bar Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\nstaticinvoke <test.MyClass: void calc()>();\nreturn i1;\n",];
-        "429877854"->"284124153";
-        "1503779328" [style=filled,label="Method: bar Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
-        "807839224"->"1503779328";
-        "1418492190" [label="Method: bar Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
-        "1503779328"->"1418492190";
+        "1063410572" [label="Method: bar Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto staticinvoke <test.MyClass: void calc()>()\nstaticinvoke <test.MyClass: void calc()>()\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "1893360267" [label="Method: bar Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto staticinvoke <test.MyClass: void calc()>();\n",];
+        "1063410572"->"1893360267";
+        "1240835673" [label="Method: bar Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\nstaticinvoke <test.MyClass: void calc()>();\nreturn i1;\n",];
+        "1063410572"->"1240835673";
+        "1458860096" [style=filled,label="Method: bar Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
+        "1893360267"->"1458860096";
+        "511460094" [label="Method: bar Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
+        "1458860096"->"511460094";
     }
     subgraph "cluster_calc" {
         label="calc";
-        "1333667589" [label="Method: calc Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \nb0 = 3\nreturn\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1664921113" [label="Method: calc Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\nb0 = 3;\nreturn;\n",];
-        "1333667589"->"1664921113";
+        "1666811772" [label="Method: calc Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \nb0 = 3\nreturn\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "1588861977" [label="Method: calc Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\nb0 = 3;\nreturn;\n",];
+        "1666811772"->"1588861977";
     }
-    "1602469048"
-    "429877854"
-    "1602469048"->"429877854" [label="PARAM",];
-    "284124153"
-    "1333667589"
-    "284124153"->"1333667589" [label="PARAM",];
+    "74479789"
+    "1063410572"
+    "74479789"->"1063410572" [label="PARAM",];
+    "1240835673"
+    "1240835673"->"74479789" [label="RET",];
+    "1666811772"
+    "1240835673"->"1666811772" [label="PARAM",];
 }

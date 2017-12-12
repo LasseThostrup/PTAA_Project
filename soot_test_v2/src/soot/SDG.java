@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import soot.jimple.internal.JRetStmt;
+import soot.jimple.internal.JReturnStmt;
 import soot.jimple.toolkits.callgraph.CHATransformer;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
@@ -30,9 +32,9 @@ public class SDG {
 	LinkedHashMap<HashMutablePDG, List<SdgEdge>> connections;
 	CallGraph cg;
 	Body body;
-	
-	//Ctor
-	//What to pass here? path to bytecode dir?
+
+	// Ctor
+	// What to pass here? path to bytecode dir?
 	public SDG(String entryMethod) {
 		Scene s = Scene.v();
 		SootClass c = s.loadClassAndSupport("test.MyClass");
@@ -48,38 +50,40 @@ public class SDG {
 		CHATransformer.v().transform();
 
 		cg = s.getCallGraph();
-		//System.out.println(cg);
+		// System.out.println(cg);
 
 		connections = new LinkedHashMap<>();
-		
+
 		iteratePdg(pdg);
-		
-		for (Map.Entry<HashMutablePDG, List<SdgEdge>> entry: connections.entrySet()) {
+
+		for (Map.Entry<HashMutablePDG, List<SdgEdge>> entry : connections.entrySet()) {
 			HashMutablePDG pdgEntry = entry.getKey();
-		    List<SdgEdge> SdgEdgeList = entry.getValue();
-		    for (SdgEdge edge : SdgEdgeList) {
-		    	System.out.println(edge);
-		    }
-		    
+			List<SdgEdge> SdgEdgeList = entry.getValue();
+			for (SdgEdge edge : SdgEdgeList) {
+				System.out.println(edge);
+			}
+
 		}
-		
-//				
-//		for (PDGNode pdgNode : nodeToPDGmapping.keySet()) {
-//			for (HashMutablePDG lpdg : nodeToPDGmapping.get(pdgNode)) {
-//				System.out.println(pdgNode.toShortString() + "------->" + lpdg.toString());
-//			}
-//			System.out.println();
-//		}
-	}	
-	
+
+		//
+		// for (PDGNode pdgNode : nodeToPDGmapping.keySet()) {
+		// for (HashMutablePDG lpdg : nodeToPDGmapping.get(pdgNode)) {
+		// System.out.println(pdgNode.toShortString() + "------->" +
+		// lpdg.toString());
+		// }
+		// System.out.println();
+		// }
+	}
+
 	private void iteratePdg(HashMutablePDG pdg) {
-		//Base case
-		if (connections.containsKey(pdg)) return;
-		
-		//Recursive case		
+		// Base case
+		if (connections.containsKey(pdg))
+			return;
+
+		// Recursive case
 		LinkedList<SdgEdge> sdgEdgeList = new LinkedList<SdgEdge>();
 		connections.put(pdg, sdgEdgeList);
-		
+
 		Iterator i = pdg.iterator();
 		while (i.hasNext()) {
 			PDGNode node = (PDGNode) i.next();
@@ -95,18 +99,18 @@ public class SDG {
 							Body body = edge.tgt().retrieveActiveBody();
 							UnitGraph cfg = new ExceptionalUnitGraph(body);
 							HashMutablePDG tempPdg = new HashMutablePDG(cfg);
-							
+
 							if (tempPdg.getNodes().size() > 1) {
 								Object toPDGNode = tempPdg.GetStartNode();
 								if (toPDGNode instanceof PDGNode) {
-									
-									EdgeType edgeType = edge.passesParameters() ? EdgeType.PARAM : EdgeType.CALL;									
-									
-									sdgEdgeList.add(new SdgEdge(node, (PDGNode)toPDGNode, edgeType, pdg, tempPdg));
-									
-									//Try to create a return edge if it applies
+
+									EdgeType edgeType = edge.passesParameters() ? EdgeType.PARAM : EdgeType.CALL;
+
+									sdgEdgeList.add(new SdgEdge(node, (PDGNode) toPDGNode, edgeType, pdg, tempPdg));
+
+									// Try to create a return edge if it applies
 									// ...
-									
+									sdgEdgeList.addAll(findReturnEdges(tempPdg, pdg, node));
 									iteratePdg(tempPdg);
 								}
 							}
@@ -117,54 +121,72 @@ public class SDG {
 		}
 	}
 
+	public List<SdgEdge> findReturnEdges(HashMutablePDG fromPdg, HashMutablePDG toPdg, PDGNode callNode) {
+		List<SdgEdge> sdgEdges = new LinkedList<SdgEdge>();
+		Iterator i = fromPdg.iterator();
+		while (i.hasNext()) {
+			PDGNode node = (PDGNode) i.next();
+			if (node.getNode() instanceof Block) {
+				Block bl = (Block) node.getNode();
+				Iterator<Unit> it = bl.iterator();
+				while (it.hasNext()) {
+					Unit u = (Unit) it.next();
+					if (u instanceof JRetStmt || u instanceof JReturnStmt)
+						sdgEdges.add(new SdgEdge(node, callNode, EdgeType.RET, fromPdg, toPdg));
+				}
+			}
+		}
+		return sdgEdges;
+	}
+
 	public DotGraph toDotGraph() {
-		//DotNamer namer = new DotNamer(1000, 0.7f);
+		// DotNamer namer = new DotNamer(1000, 0.7f);
 		DotGraph dot = new DotGraph("System Dependence Graph");
 		int j = 0;
-		for (HashMutablePDG pdg: connections.keySet()) {
+		for (HashMutablePDG pdg : connections.keySet()) {
 			String name = pdg.getCFG().getBody().getMethod().getName();
-			DotGraph subGraph = dot.createSubGraph("cluster_"+name);
+			DotGraph subGraph = dot.createSubGraph("cluster_" + name);
 			subGraph.setGraphLabel(name);
 
 			PDGNode startNode = pdg.GetStartNode();
 			Queue<PDGNode> worklist = new LinkedList<PDGNode>();
-			worklist.add(startNode);			
-			
+			worklist.add(startNode);
+
 			DotGraphNode dotnode = subGraph.drawNode(String.valueOf(startNode.hashCode()));
-			dotnode.setLabel("Method: "+name + " " + startNode.toString().replaceAll("\\r", ""));
-			
+			dotnode.setLabel("Method: " + name + " " + startNode.toString().replaceAll("\\r", ""));
+
 			if (startNode.getType() == PDGNode.Type.REGION) {
 				dotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
 			}
 			Set<PDGNode> visited = new HashSet<PDGNode>();
-			
-			
+
 			while (!worklist.isEmpty()) {
 				PDGNode node = worklist.poll();
 				visited.add(node);
-				
+
 				for (PDGNode succ : node.getDependets()) {
-					
+
 					if (!visited.contains(succ)) {
 						DotGraphNode succDotnode = subGraph.drawNode(String.valueOf(succ.hashCode()));
 						if (succ.getType() == PDGNode.Type.REGION) {
 							succDotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
 						}
-						succDotnode.setLabel("Method: "+name + " " + succ.toString().replaceAll("\\r", ""));
+						succDotnode.setLabel("Method: " + name + " " + succ.toString().replaceAll("\\r", ""));
 						worklist.add(succ);
 					}
-					
+
 					subGraph.drawEdge(String.valueOf(node.hashCode()), String.valueOf(succ.hashCode()));
-	 			}
+				}
 			}
 		}
-		for (List<SdgEdge> edges: connections.values()) {
-			for(SdgEdge edge : edges) {
-				DotGraphEdge dotEdge = dot.drawEdge(String.valueOf(edge.from.hashCode()), String.valueOf(edge.to.hashCode()));
+		for (List<SdgEdge> edges : connections.values()) {
+			for (SdgEdge edge : edges) {
+				DotGraphEdge dotEdge = dot.drawEdge(String.valueOf(edge.from.hashCode()),
+						String.valueOf(edge.to.hashCode()));
 				dotEdge.setLabel(edge.type.toString());
 			}
 		}
-		
+
 		return dot;
 	}
 }
