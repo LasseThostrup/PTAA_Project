@@ -15,6 +15,7 @@ import soot.jimple.internal.JReturnStmt;
 import soot.jimple.toolkits.callgraph.CHATransformer;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
+import soot.options.Options;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
@@ -37,15 +38,18 @@ public class SDG {
 	// What to pass here? path to bytecode dir?
 	public SDG(String entryMethod) {
 		Scene s = Scene.v();
+		Options.v().set_whole_program(true);
 		SootClass c = s.loadClassAndSupport("test.MyClass");
 		c.setApplicationClass();
 		Scene.v().setMainClass(c);
 
 		SootMethod m = c.getMethodByName("foo");
 		body = m.retrieveActiveBody();
-
+		
 		UnitGraph g = new ExceptionalUnitGraph(body);
 		HashMutablePDG pdg = new HashMutablePDG(g);
+
+		s.loadNecessaryClasses();
 
 		CHATransformer.v().transform();
 
@@ -96,6 +100,7 @@ public class SDG {
 					while (outGoingEdges.hasNext()) {
 						Edge edge = outGoingEdges.next();
 						if (!edge.isClinit()) {
+							if (!edge.tgt().isConcrete()) continue;
 							Body body = edge.tgt().retrieveActiveBody();
 							UnitGraph cfg = new ExceptionalUnitGraph(body);
 							HashMutablePDG tempPdg = new HashMutablePDG(cfg);
@@ -153,7 +158,7 @@ public class SDG {
 			worklist.add(startNode);
 
 			DotGraphNode dotnode = subGraph.drawNode(String.valueOf(startNode.hashCode()));
-			dotnode.setLabel("Method: " + name + " " + startNode.toString().replaceAll("\\r", ""));
+			dotnode.setLabel(startNode.toString().replaceAll("\\r", ""));
 
 			if (startNode.getType() == PDGNode.Type.REGION) {
 				dotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
@@ -171,7 +176,7 @@ public class SDG {
 						if (succ.getType() == PDGNode.Type.REGION) {
 							succDotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
 						}
-						succDotnode.setLabel("Method: " + name + " " + succ.toString().replaceAll("\\r", ""));
+						succDotnode.setLabel(succ.toString().replaceAll("\\r", ""));
 						worklist.add(succ);
 					}
 

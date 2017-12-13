@@ -1,16 +1,24 @@
 package test;
 
+import java.util.ArrayList;
+
+import soot.JastAddJ.List;
+
 public class MyClass {
 	public static void main(String[] args) {
+
 		foo();
 	}
 
 	public static int foo() {
-		int a = 1 + 2;
-		int b = a + 3;
-		if (a > b)
-			return bar();
-		else
+		ArrayList<Integer> asd = new ArrayList<Integer>();
+		asd.add(1);
+		asd.add(2);
+//		int a = 1 + 2;
+//		int b = a + 3;
+//		if (a > b)
+//			return bar();
+//		else
 			return 2;
 	}
 
@@ -20,11 +28,11 @@ public class MyClass {
 		if (x < 2) {
 			y = 2 * x;
 		}
-		calc();
+		calc(x);
 		return y;
 	}
 	
-	public static void calc() {
+	public static void calc(int i) {
 		int a = 1+2;
 	}
 }
