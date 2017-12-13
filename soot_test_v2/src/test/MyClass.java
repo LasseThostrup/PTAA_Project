@@ -6,19 +6,19 @@ import soot.JastAddJ.List;
 
 public class MyClass {
 	public static void main(String[] args) {
-
-		foo();
+//		ArrayList<Integer> asd = new ArrayList<Integer>();
+//		asd.add(1);
+//		asd.add(2);
+		int a = 2;
+		foo(a);
 	}
 
-	public static int foo() {
-		ArrayList<Integer> asd = new ArrayList<Integer>();
-		asd.add(1);
-		asd.add(2);
-//		int a = 1 + 2;
-//		int b = a + 3;
-//		if (a > b)
-//			return bar();
-//		else
+	public static int foo(int c) {
+		int a = 1 + bar();
+		int b = a + c;
+		if (a > b)
+			return bar();
+		else
 			return 2;
 	}
 

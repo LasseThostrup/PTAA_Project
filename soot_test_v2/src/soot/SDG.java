@@ -1,6 +1,5 @@
 package soot;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -17,12 +16,10 @@ import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
 import soot.options.Options;
 import soot.toolkits.graph.Block;
-import soot.toolkits.graph.DirectedGraph;
 import soot.toolkits.graph.ExceptionalUnitGraph;
 import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
-import soot.util.cfgcmd.CFGToDotGraph;
 import soot.util.dot.DotGraph;
 import soot.util.dot.DotGraphConstants;
 import soot.util.dot.DotGraphEdge;
@@ -38,7 +35,7 @@ public class SDG {
 	// What to pass here? path to bytecode dir?
 	public SDG(String entryMethod) {
 		Scene s = Scene.v();
-		Options.v().set_whole_program(true);
+		//Options.v().set_whole_program(true);
 		SootClass c = s.loadClassAndSupport("test.MyClass");
 		c.setApplicationClass();
 		Scene.v().setMainClass(c);
@@ -49,7 +46,7 @@ public class SDG {
 		UnitGraph g = new ExceptionalUnitGraph(body);
 		HashMutablePDG pdg = new HashMutablePDG(g);
 
-		s.loadNecessaryClasses();
+		//s.loadNecessaryClasses();
 
 		CHATransformer.v().transform();
 
@@ -68,15 +65,6 @@ public class SDG {
 			}
 
 		}
-
-		//
-		// for (PDGNode pdgNode : nodeToPDGmapping.keySet()) {
-		// for (HashMutablePDG lpdg : nodeToPDGmapping.get(pdgNode)) {
-		// System.out.println(pdgNode.toShortString() + "------->" +
-		// lpdg.toString());
-		// }
-		// System.out.println();
-		// }
 	}
 
 	private void iteratePdg(HashMutablePDG pdg) {
@@ -103,20 +91,24 @@ public class SDG {
 							if (!edge.tgt().isConcrete()) continue;
 							Body body = edge.tgt().retrieveActiveBody();
 							UnitGraph cfg = new ExceptionalUnitGraph(body);
-							HashMutablePDG tempPdg = new HashMutablePDG(cfg);
-
+							HashMutablePDG tempPdg = new HashMutablePDG(cfg); 
+							
+							//Check if there already is a matching pdg, and take the existing one if it is the case.
+							HashMutablePDG existingPdg = getExistingPdg(tempPdg);					
+							if (existingPdg != null) tempPdg = existingPdg;
+							
 							if (tempPdg.getNodes().size() > 1) {
-								Object toPDGNode = tempPdg.GetStartNode();
+								Object toPDGNode = tempPdg.GetStartNode(); 
 								if (toPDGNode instanceof PDGNode) {
-
-									EdgeType edgeType = edge.passesParameters() ? EdgeType.PARAM : EdgeType.CALL;
+									
+									int parameterCount = tempPdg.getCFG().getBody().getMethod().getParameterCount();
+									EdgeType edgeType = parameterCount > 0 ? EdgeType.PARAM : EdgeType.CALL; 
 
 									sdgEdgeList.add(new SdgEdge(node, (PDGNode) toPDGNode, edgeType, pdg, tempPdg));
 
-									// Try to create a return edge if it applies
-									// ...
 									sdgEdgeList.addAll(findReturnEdges(tempPdg, pdg, node));
-									iteratePdg(tempPdg);
+									
+									iteratePdg(tempPdg);	
 								}
 							}
 						}
@@ -126,7 +118,16 @@ public class SDG {
 		}
 	}
 
-	public List<SdgEdge> findReturnEdges(HashMutablePDG fromPdg, HashMutablePDG toPdg, PDGNode callNode) {
+	///If there is a match, it returns the already existing pdg. If not match, null is returned!
+	private HashMutablePDG getExistingPdg(HashMutablePDG pdg) {
+		HashMutablePDG existingPdg = null;
+		for (HashMutablePDG pdgCmp : connections.keySet()) {
+			if (pdgCmp.toString().equals(pdg.toString())) existingPdg = pdgCmp; //TODO: Not ideal to do such a long string comparison
+		}
+		return existingPdg;
+	}
+	
+	private List<SdgEdge> findReturnEdges(HashMutablePDG fromPdg, HashMutablePDG toPdg, PDGNode callNode) {
 		List<SdgEdge> sdgEdges = new LinkedList<SdgEdge>();
 		Iterator i = fromPdg.iterator();
 		while (i.hasNext()) {
@@ -149,9 +150,12 @@ public class SDG {
 		DotGraph dot = new DotGraph("System Dependence Graph");
 		int j = 0;
 		for (HashMutablePDG pdg : connections.keySet()) {
-			String name = pdg.getCFG().getBody().getMethod().getName();
+			SootMethod method = pdg.getCFG().getBody().getMethod();
+			String name = method.getSignature();
 			DotGraph subGraph = dot.createSubGraph("cluster_" + name);
 			subGraph.setGraphLabel(name);
+			subGraph.setGraphAttribute("fontsize", "40");
+			subGraph.setGraphAttribute("fontcolor", "blue");
 
 			PDGNode startNode = pdg.GetStartNode();
 			Queue<PDGNode> worklist = new LinkedList<PDGNode>();
