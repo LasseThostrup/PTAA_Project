@@ -4,13 +4,13 @@ import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
 
 public class SdgEdge {
-	PDGNode from;
-	PDGNode to;
+	Unit from;
+	Unit to;
 	EdgeType type;
 	HashMutablePDG pdgFrom;
 	HashMutablePDG pdgTo;
 	
-	public SdgEdge(PDGNode from, PDGNode to, EdgeType type, HashMutablePDG pdgFrom, HashMutablePDG pdgTo) {
+	public SdgEdge(Unit from, Unit to, EdgeType type, HashMutablePDG pdgFrom, HashMutablePDG pdgTo) {
 		this.from = from;
 		this.to = to;
 		this.type = type;
@@ -20,7 +20,7 @@ public class SdgEdge {
 
 	@Override
 	public String toString() {
-		return from.toShortString() + " ============> " + to.toShortString();
+		return from.toString() + " ============> " + (to != null ? to.toString() : "");
 	}	
 	
 	
