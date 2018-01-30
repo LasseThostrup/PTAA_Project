@@ -17,7 +17,7 @@ public class MyClass {
 		int a = 1 + bar();
 		int b = a + c;
 		if (a > b)
-			return bar();
+			return 4;
 		else
 			return 2;
 	}
@@ -35,7 +35,6 @@ public class MyClass {
 	}
 
 	public static int calc(int i) {
-		int a = i + 2;
-		return a;
+		return 1 + i;
 	}
 }

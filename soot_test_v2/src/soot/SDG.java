@@ -11,6 +11,7 @@ import java.util.Set;
 
 import soot.jimple.internal.JRetStmt;
 import soot.jimple.internal.JReturnStmt;
+import soot.jimple.internal.JimpleLocal;
 import soot.jimple.toolkits.callgraph.CHATransformer;
 import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.jimple.toolkits.callgraph.Edge;
@@ -21,13 +22,13 @@ import soot.toolkits.graph.UnitGraph;
 import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
 import soot.util.dot.DotGraph;
-import soot.util.dot.DotGraphConstants;
 import soot.util.dot.DotGraphEdge;
 import soot.util.dot.DotGraphNode;
 
 public class SDG {
 
 	LinkedHashMap<HashMutablePDG, List<SdgEdge>> connections;
+	LinkedHashMap<String, Unit> defUnitMappings;
 	CallGraph cg;
 	Body body;
 
@@ -101,6 +102,7 @@ public class SDG {
 		// System.out.println(cg);
 
 		connections = new LinkedHashMap<>();
+		defUnitMappings = new LinkedHashMap<>();
 
 		iteratePdg(pdg);
 
@@ -114,6 +116,19 @@ public class SDG {
 		}
 	}
 
+	private void addDefinitionToUnitMapping(String name, Unit u) {
+		// Create mapping between the potential definition of variable to the unit
+		List<ValueBox> defBoxes = u.getDefBoxes();
+		if (defBoxes == null)
+			return;
+		for (ValueBox vb : defBoxes) {
+			Value v = vb.getValue();
+			if (v instanceof JimpleLocal)
+				defUnitMappings.put(name + ((JimpleLocal) v).getName(), u);
+		}
+
+	}
+
 	private void iteratePdg(HashMutablePDG pdg) {
 		// Base case
 		if (connections.containsKey(pdg))
@@ -123,6 +138,9 @@ public class SDG {
 		LinkedList<SdgEdge> sdgEdgeList = new LinkedList<SdgEdge>();
 		connections.put(pdg, sdgEdgeList);
 
+		SootMethod method = pdg.getCFG().getBody().getMethod();
+		String name = method.getSignature();
+
 		Iterator i = pdg.iterator();
 		while (i.hasNext()) {
 			PDGNode node = (PDGNode) i.next();
@@ -131,7 +149,11 @@ public class SDG {
 				Iterator<Unit> it = bl.iterator();
 				while (it.hasNext()) {
 					Unit u = (Unit) it.next();
+
+					addDefinitionToUnitMapping(name, u);
+
 					Iterator<Edge> outGoingEdges = cg.edgesOutOf(u);
+
 					while (outGoingEdges.hasNext()) {
 						Edge edge = outGoingEdges.next();
 						if (!edge.isClinit()) {
@@ -139,6 +161,7 @@ public class SDG {
 								continue;
 							Body body = edge.tgt().retrieveActiveBody();
 							UnitGraph cfg = new ExceptionalUnitGraph(body);
+
 							HashMutablePDG tempPdg = new HashMutablePDG(cfg);
 
 							// Check if there already is a matching pdg, and take the existing one if it is
@@ -148,18 +171,14 @@ public class SDG {
 								tempPdg = existingPdg;
 
 							if (tempPdg.getNodes().size() > 1) {
-								Object toPDGNode = tempPdg.GetStartNode();
-								if (toPDGNode instanceof PDGNode) {
+								int parameterCount = tempPdg.getCFG().getBody().getMethod().getParameterCount();
+								EdgeType edgeType = parameterCount > 0 ? EdgeType.PARAM : EdgeType.CALL;
 
-									int parameterCount = tempPdg.getCFG().getBody().getMethod().getParameterCount();
-									EdgeType edgeType = parameterCount > 0 ? EdgeType.PARAM : EdgeType.CALL;
+								sdgEdgeList.add(new SdgEdge(u, null, edgeType, pdg, tempPdg));
 
-									sdgEdgeList.add(new SdgEdge(node, (PDGNode) toPDGNode, edgeType, pdg, tempPdg));
+								sdgEdgeList.addAll(findReturnEdges(tempPdg, pdg, u));
 
-									sdgEdgeList.addAll(findReturnEdges(tempPdg, pdg, node));
-
-									iteratePdg(tempPdg);
-								}
+								iteratePdg(tempPdg);
 							}
 						}
 					}
@@ -179,7 +198,7 @@ public class SDG {
 		return existingPdg;
 	}
 
-	private List<SdgEdge> findReturnEdges(HashMutablePDG fromPdg, HashMutablePDG toPdg, PDGNode callNode) {
+	private List<SdgEdge> findReturnEdges(HashMutablePDG fromPdg, HashMutablePDG toPdg, Unit callUnit) {
 		List<SdgEdge> sdgEdges = new LinkedList<SdgEdge>();
 		Iterator i = fromPdg.iterator();
 		while (i.hasNext()) {
@@ -189,10 +208,9 @@ public class SDG {
 				Iterator<Unit> it = bl.iterator();
 				while (it.hasNext()) {
 					Unit u = (Unit) it.next();
-					if (u instanceof JRetStmt || u instanceof JReturnStmt) {
-						System.out.println("Return statement: " + u);
-						sdgEdges.add(new SdgEdge(node, callNode, EdgeType.RET, fromPdg, toPdg));
-					}
+
+					if (u instanceof JRetStmt || u instanceof JReturnStmt)
+						sdgEdges.add(new SdgEdge(u, callUnit, EdgeType.RET, fromPdg, toPdg));
 				}
 			}
 		}
@@ -202,11 +220,12 @@ public class SDG {
 	public DotGraph toDotGraph() {
 		// DotNamer namer = new DotNamer(1000, 0.7f);
 		DotGraph dot = new DotGraph("System Dependence Graph");
+		dot.setGraphAttribute("compound", "true");
 		int j = 0;
 		for (HashMutablePDG pdg : connections.keySet()) {
 			SootMethod method = pdg.getCFG().getBody().getMethod();
 			String name = method.getSignature();
-			DotGraph subGraph = dot.createSubGraph("cluster_" + name);
+			DotGraph subGraph = dot.createSubGraph("cluster_" + pdg.hashCode());
 			subGraph.setGraphLabel(name);
 			subGraph.setGraphAttribute("fontsize", "40");
 			subGraph.setGraphAttribute("fontcolor", "blue");
@@ -215,12 +234,38 @@ public class SDG {
 			Queue<PDGNode> worklist = new LinkedList<PDGNode>();
 			worklist.add(startNode);
 
-			DotGraphNode dotnode = subGraph.drawNode(String.valueOf(startNode.hashCode()));
-			dotnode.setLabel(startNode.toString().replaceAll("\\r", ""));
-
+			DotGraph startSubGraph = subGraph.createSubGraph("cluster_" + startNode.hashCode());
+			startSubGraph.setGraphLabel("");
+			// DotGraphNode succDotnode =
+			// subGraph.drawNode(String.valueOf(succ.hashCode()));
 			if (startNode.getType() == PDGNode.Type.REGION) {
-				dotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
+				startSubGraph.setGraphAttribute("color", "grey");
 			}
+
+			// Add node instead of label of cluster, and use this to add edges between the
+			// cfgSubGraph clusters
+			DotGraphNode startLabelNode = startSubGraph.drawNode("StartNode" + startNode.hashCode());
+			startLabelNode.setLabel(startNode.toShortString());
+			startLabelNode.setAttribute("shape", "plaintext");
+
+			if (startNode.getNode() instanceof Block) {
+				Block bl = (Block) startNode.getNode();
+				Iterator<Unit> it = bl.iterator();
+				while (it.hasNext()) {
+					Unit u = it.next();
+					DotGraphNode uNode = startSubGraph.drawNode(String.valueOf(u.hashCode()));
+					uNode.setLabel(u.toString());
+				}
+			}
+
+			//
+			// DotGraphNode dotnode =
+			// subGraph.drawNode(String.valueOf(startNode.hashCode()));
+			// dotnode.setLabel(startNode.toString().replaceAll("\\r", ""));
+			//
+			// if (startNode.getType() == PDGNode.Type.REGION) {
+			// dotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
+			// }
 			Set<PDGNode> visited = new HashSet<PDGNode>();
 
 			while (!worklist.isEmpty()) {
@@ -230,23 +275,74 @@ public class SDG {
 				for (PDGNode succ : node.getDependets()) {
 
 					if (!visited.contains(succ)) {
-						DotGraphNode succDotnode = subGraph.drawNode(String.valueOf(succ.hashCode()));
+						DotGraph cfgSubGraph = subGraph.createSubGraph("cluster_" + succ.hashCode());
+						cfgSubGraph.setGraphLabel("");
+						// DotGraphNode succDotnode =
+						// subGraph.drawNode(String.valueOf(succ.hashCode()));
 						if (succ.getType() == PDGNode.Type.REGION) {
-							succDotnode.setStyle(DotGraphConstants.NODE_STYLE_FILLED);
+							cfgSubGraph.setGraphAttribute("color", "grey");
 						}
-						succDotnode.setLabel(succ.toString().replaceAll("\\r", ""));
+
+						// Add node instead of label of cluster, and use this to add edges between the
+						// cfgSubGraph clusters
+						DotGraphNode labelNode = cfgSubGraph.drawNode("StartNode" + succ.hashCode());
+						labelNode.setLabel(succ.toShortString());
+						labelNode.setAttribute("shape", "plaintext");
+
+						if (succ.getNode() instanceof Block) {
+							Block bl = (Block) succ.getNode();
+							Iterator<Unit> it = bl.iterator();
+							while (it.hasNext()) {
+								Unit u = it.next();
+								DotGraphNode uNode = cfgSubGraph.drawNode(String.valueOf(u.hashCode()));
+								uNode.setLabel(u.toString());
+
+								// Add data dependency edges
+								List<ValueBox> useValueBoxes = u.getUseBoxes();
+								if (useValueBoxes != null) {
+									for (ValueBox vb : useValueBoxes) {
+										Value v = vb.getValue();
+										if (v instanceof JimpleLocal) {
+											String varName = ((JimpleLocal) v).getName();
+											Unit edgeToUnit = defUnitMappings.get(name + varName);
+											if (edgeToUnit != null)
+												subGraph.drawEdge(String.valueOf(edgeToUnit.hashCode()),
+														String.valueOf(u.hashCode())).setLabel("D_" + varName);
+											;
+										}
+									}
+								}
+							}
+						}
+
+						// succDotnode.setLabel(succ.toString().replaceAll("\\r", ""));
 						worklist.add(succ);
 					}
-
-					subGraph.drawEdge(String.valueOf(node.hashCode()), String.valueOf(succ.hashCode()));
+					// Add control flow edge
+					DotGraphEdge edge = subGraph.drawEdge("StartNode" + node.hashCode(), "StartNode" + succ.hashCode());
+					edge.setLabel("c");
+					edge.setAttribute("ltail", "cluster_" + node.hashCode());
+					edge.setAttribute("lhead", "cluster_" + succ.hashCode());
 				}
 			}
 		}
 		for (List<SdgEdge> edges : connections.values()) {
 			for (SdgEdge edge : edges) {
-				DotGraphEdge dotEdge = dot.drawEdge(String.valueOf(edge.from.hashCode()),
-						String.valueOf(edge.to.hashCode()));
-				dotEdge.setLabel(edge.type.toString());
+				if (edge.type == EdgeType.RET) {
+					DotGraphEdge dotEdge = dot.drawEdge(String.valueOf(edge.from.hashCode()),
+							String.valueOf(edge.to.hashCode()));
+					dotEdge.setLabel(edge.type.toString());
+
+					// dotEdge.setAttribute("ltail", "cluster_"+edge.pdgFrom.hashCode()); //Head of
+					// edge should point to SDG
+				} else {
+					DotGraphEdge dotEdge = dot.drawEdge(String.valueOf(edge.from.hashCode()),
+							"StartNode" + edge.pdgTo.GetStartNode().hashCode());
+					dotEdge.setAttribute("lhead", "cluster_" + edge.pdgTo.hashCode()); // Head of edge should point to
+																						// SDG
+					dotEdge.setLabel(edge.type.toString());
+
+				}
 			}
 		}
 
