@@ -6,9 +6,9 @@ import soot.JastAddJ.List;
 
 public class MyClass {
 	public static void main(String[] args) {
-//		ArrayList<Integer> asd = new ArrayList<Integer>();
-//		asd.add(1);
-//		asd.add(2);
+		// ArrayList<Integer> asd = new ArrayList<Integer>();
+		// asd.add(1);
+		// asd.add(2);
 		int a = 2;
 		foo(a);
 	}
@@ -28,11 +28,14 @@ public class MyClass {
 		if (x < 2) {
 			y = 2 * x;
 		}
-		calc(x);
-		return y;
+		int ret1 = calc(x);
+		int ret2 = calc(y);
+		return calc(ret1) + calc(ret2);
+
 	}
-	
-	public static void calc(int i) {
-		int a = 1+2;
+
+	public static int calc(int i) {
+		int a = i + 2;
+		return a;
 	}
 }

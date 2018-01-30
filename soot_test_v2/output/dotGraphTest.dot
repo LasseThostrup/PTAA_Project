@@ -3,48 +3,56 @@ digraph "System Dependence Graph" {
         label="<test.MyClass: int foo(int)>";
         fontsize=40;
         fontcolor=blue;
-        "1250508552" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \ni0 := @parameter0: int\n$i1 = staticinvoke <test.MyClass: int bar()>()\ni2 = 1 + $i1\ni3 = i2 + i0\nif i2 <= i3 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1308530418" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\ni0 := @parameter0: int;\n$i1 = staticinvoke <test.MyClass: int bar()>();\ni2 = 1 + $i1;\ni3 = i2 + i0;\nif i2 <= i3 goto return 2;\n",];
-        "1250508552"->"1308530418";
-        "1936542270" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i4 = staticinvoke <test.MyClass: int bar()>()\nreturn $i4\nEnd of PDG Region 1 -----------------------------\n",];
-        "1308530418"->"1936542270";
-        "1807206788" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
-        "1308530418"->"1807206788";
-        "686746175" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i4 = staticinvoke <test.MyClass: int bar()>();\nreturn $i4;\n",];
-        "1936542270"->"686746175";
-        "1565844247" [label="Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
-        "1807206788"->"1565844247";
+        "967741809" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \ni0 := @parameter0: int\n$i1 = staticinvoke <test.MyClass: int bar()>()\ni2 = 1 + $i1\ni3 = i2 + i0\nif i2 <= i3 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "234473260" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\ni0 := @parameter0: int;\n$i1 = staticinvoke <test.MyClass: int bar()>();\ni2 = 1 + $i1;\ni3 = i2 + i0;\nif i2 <= i3 goto return 2;\n",];
+        "967741809"->"234473260";
+        "2145588569" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i4 = staticinvoke <test.MyClass: int bar()>()\nreturn $i4\nEnd of PDG Region 1 -----------------------------\n",];
+        "234473260"->"2145588569";
+        "1356181503" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
+        "234473260"->"1356181503";
+        "1136575952" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i4 = staticinvoke <test.MyClass: int bar()>();\nreturn $i4;\n",];
+        "2145588569"->"1136575952";
+        "564985199" [label="Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
+        "1356181503"->"564985199";
     }
     subgraph "cluster_<test.MyClass: int bar()>" {
         label="<test.MyClass: int bar()>";
         fontsize=40;
         fontcolor=blue;
-        "1486550585" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto staticinvoke <test.MyClass: void calc(int)>(b0)\nstaticinvoke <test.MyClass: void calc(int)>(b0)\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1585143854" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto staticinvoke <test.MyClass: void calc(int)>(b0);\n",];
-        "1486550585"->"1585143854";
-        "1132038938" [label="Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\nstaticinvoke <test.MyClass: void calc(int)>(b0);\nreturn i1;\n",];
-        "1486550585"->"1132038938";
-        "953255194" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
-        "1585143854"->"953255194";
-        "1620802193" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
-        "953255194"->"1620802193";
+        "617225781" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1)\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2)\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3)\n$i6 = $i4 + $i5\nreturn $i6\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "256809018" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0);\n",];
+        "617225781"->"256809018";
+        "1693248094" [label="Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0);\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1);\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2);\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3);\n$i6 = $i4 + $i5;\nreturn $i6;\n",];
+        "617225781"->"1693248094";
+        "435807252" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
+        "256809018"->"435807252";
+        "2114909461" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
+        "435807252"->"2114909461";
     }
-    subgraph "cluster_<test.MyClass: void calc(int)>" {
-        label="<test.MyClass: void calc(int)>";
+    subgraph "cluster_<test.MyClass: int calc(int)>" {
+        label="<test.MyClass: int calc(int)>";
         fontsize=40;
         fontcolor=blue;
-        "1947871742" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \ni0 := @parameter0: int\nb1 = 3\nreturn\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1136568978" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\ni0 := @parameter0: int;\nb1 = 3;\nreturn;\n",];
-        "1947871742"->"1136568978";
+        "219230684" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \ni0 := @parameter0: int\ni1 = i0 + 2\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "572247323" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\ni0 := @parameter0: int;\ni1 = i0 + 2;\nreturn i1;\n",];
+        "219230684"->"572247323";
     }
-    "1308530418"
-    "1486550585"
-    "1308530418"->"1486550585" [label="CALL",];
-    "1132038938"
-    "1132038938"->"1308530418" [label="RET",];
-    "686746175"
-    "686746175"->"1486550585" [label="CALL",];
-    "1132038938"->"686746175" [label="RET",];
-    "1947871742"
-    "1132038938"->"1947871742" [label="PARAM",];
+    "1136575952"
+    "617225781"
+    "1136575952"->"617225781" [label="CALL",];
+    "1693248094"
+    "1693248094"->"1136575952" [label="RET",];
+    "234473260"
+    "234473260"->"617225781" [label="CALL",];
+    "1693248094"->"234473260" [label="RET",];
+    "219230684"
+    "1693248094"->"219230684" [label="PARAM",];
+    "572247323"
+    "572247323"->"1693248094" [label="RET",];
+    "1693248094"->"219230684" [label="PARAM",];
+    "572247323"->"1693248094" [label="RET",];
+    "1693248094"->"219230684" [label="PARAM",];
+    "572247323"->"1693248094" [label="RET",];
+    "1693248094"->"219230684" [label="PARAM",];
+    "572247323"->"1693248094" [label="RET",];
 }

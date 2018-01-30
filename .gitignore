@@ -33,6 +33,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+Library/
 
 # External tool builders
 .externalToolBuilders/

@@ -1,0 +1,58 @@
+digraph "System Dependence Graph" {
+    subgraph "cluster_<test.MyClass: int foo(int)>" {
+        label="<test.MyClass: int foo(int)>";
+        fontsize=40;
+        fontcolor=blue;
+        "194953444" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \ni0 := @parameter0: int\n$i1 = staticinvoke <test.MyClass: int bar()>()\ni2 = 1 + $i1\ni3 = i2 + i0\nif i2 <= i3 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "1683343791" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\ni0 := @parameter0: int;\n$i1 = staticinvoke <test.MyClass: int bar()>();\ni2 = 1 + $i1;\ni3 = i2 + i0;\nif i2 <= i3 goto return 2;\n",];
+        "194953444"->"1683343791";
+        "1210243774" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i4 = staticinvoke <test.MyClass: int bar()>()\nreturn $i4\nEnd of PDG Region 1 -----------------------------\n",];
+        "1683343791"->"1210243774";
+        "313528243" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
+        "1683343791"->"313528243";
+        "148729716" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i4 = staticinvoke <test.MyClass: int bar()>();\nreturn $i4;\n",];
+        "1210243774"->"148729716";
+        "29371704" [label="Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
+        "313528243"->"29371704";
+    }
+    subgraph "cluster_<test.MyClass: int bar()>" {
+        label="<test.MyClass: int bar()>";
+        fontsize=40;
+        fontcolor=blue;
+        "1143666326" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1)\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2)\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3)\n$i6 = $i4 + $i5\nreturn $i6\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "1590941584" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0);\n",];
+        "1143666326"->"1590941584";
+        "368930216" [label="Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0);\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1);\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2);\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3);\n$i6 = $i4 + $i5;\nreturn $i6;\n",];
+        "1143666326"->"368930216";
+        "52281177" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
+        "1590941584"->"52281177";
+        "824851423" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
+        "52281177"->"824851423";
+    }
+    subgraph "cluster_<test.MyClass: int calc(int)>" {
+        label="<test.MyClass: int calc(int)>";
+        fontsize=40;
+        fontcolor=blue;
+        "1446896304" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \ni0 := @parameter0: int\ni1 = i0 + 2\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
+        "1075206963" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\ni0 := @parameter0: int;\ni1 = i0 + 2;\nreturn i1;\n",];
+        "1446896304"->"1075206963";
+    }
+    "1683343791"
+    "1143666326"
+    "1683343791"->"1143666326" [label="CALL",];
+    "368930216"
+    "368930216"->"1683343791" [label="RET",];
+    "148729716"
+    "148729716"->"1143666326" [label="CALL",];
+    "368930216"->"148729716" [label="RET",];
+    "1446896304"
+    "368930216"->"1446896304" [label="PARAM",];
+    "1075206963"
+    "1075206963"->"368930216" [label="RET",];
+    "368930216"->"1446896304" [label="PARAM",];
+    "1075206963"->"368930216" [label="RET",];
+    "368930216"->"1446896304" [label="PARAM",];
+    "1075206963"->"368930216" [label="RET",];
+    "368930216"->"1446896304" [label="PARAM",];
+    "1075206963"->"368930216" [label="RET",];
+}

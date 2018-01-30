@@ -31,22 +31,69 @@ public class SDG {
 	CallGraph cg;
 	Body body;
 
+	public SDG(List<String> process_dirs, String class_, String entryMethod) {
+		String classPath = Scene.v().getSootClassPath();
+
+		for (String s : process_dirs)
+			classPath += ":" + s + "/bin";
+
+		Scene.v().setSootClassPath(classPath);
+
+		Options.v().no_bodies_for_excluded();
+
+		Options.v().set_whole_program(true);
+
+		Scene.v().addBasicClass("java.lang.Object", 3);
+
+		Scene s = Scene.v();
+
+		SootClass c = s.loadClassAndSupport(class_);
+
+		c.setApplicationClass();
+
+		for (SootClass sc : Scene.v().getClasses()) {
+			if (sc.declaresMethodByName("main")) {
+				Scene.v().setMainClass(sc);
+				break;
+			}
+		}
+
+		Scene.v().loadNecessaryClasses();
+
+		SootMethod m = c.getMethodByName(entryMethod);
+
+		body = m.retrieveActiveBody();
+
+		CHATransformer.v().transform();
+
+		UnitGraph g = new ExceptionalUnitGraph(body);
+
+		HashMutablePDG pdg = new HashMutablePDG(g);
+
+		cg = s.getCallGraph();
+
+		connections = new LinkedHashMap<>();
+
+		iteratePdg(pdg);
+	}
+
 	// Ctor
 	// What to pass here? path to bytecode dir?
 	public SDG(String entryMethod) {
+		// Options.v().set_whole_program(true);
+
+		// Scene.v().addBasicClass("test.MyClass");
 		Scene s = Scene.v();
-		//Options.v().set_whole_program(true);
+		// s.loadNecessaryClasses();
 		SootClass c = s.loadClassAndSupport("test.MyClass");
 		c.setApplicationClass();
 		Scene.v().setMainClass(c);
 
 		SootMethod m = c.getMethodByName("foo");
 		body = m.retrieveActiveBody();
-		
+
 		UnitGraph g = new ExceptionalUnitGraph(body);
 		HashMutablePDG pdg = new HashMutablePDG(g);
-
-		//s.loadNecessaryClasses();
 
 		CHATransformer.v().transform();
 
@@ -88,27 +135,30 @@ public class SDG {
 					while (outGoingEdges.hasNext()) {
 						Edge edge = outGoingEdges.next();
 						if (!edge.isClinit()) {
-							if (!edge.tgt().isConcrete()) continue;
+							if (!edge.tgt().isConcrete())
+								continue;
 							Body body = edge.tgt().retrieveActiveBody();
 							UnitGraph cfg = new ExceptionalUnitGraph(body);
-							HashMutablePDG tempPdg = new HashMutablePDG(cfg); 
-							
-							//Check if there already is a matching pdg, and take the existing one if it is the case.
-							HashMutablePDG existingPdg = getExistingPdg(tempPdg);					
-							if (existingPdg != null) tempPdg = existingPdg;
-							
+							HashMutablePDG tempPdg = new HashMutablePDG(cfg);
+
+							// Check if there already is a matching pdg, and take the existing one if it is
+							// the case.
+							HashMutablePDG existingPdg = getExistingPdg(tempPdg);
+							if (existingPdg != null)
+								tempPdg = existingPdg;
+
 							if (tempPdg.getNodes().size() > 1) {
-								Object toPDGNode = tempPdg.GetStartNode(); 
+								Object toPDGNode = tempPdg.GetStartNode();
 								if (toPDGNode instanceof PDGNode) {
-									
+
 									int parameterCount = tempPdg.getCFG().getBody().getMethod().getParameterCount();
-									EdgeType edgeType = parameterCount > 0 ? EdgeType.PARAM : EdgeType.CALL; 
+									EdgeType edgeType = parameterCount > 0 ? EdgeType.PARAM : EdgeType.CALL;
 
 									sdgEdgeList.add(new SdgEdge(node, (PDGNode) toPDGNode, edgeType, pdg, tempPdg));
 
 									sdgEdgeList.addAll(findReturnEdges(tempPdg, pdg, node));
-									
-									iteratePdg(tempPdg);	
+
+									iteratePdg(tempPdg);
 								}
 							}
 						}
@@ -118,15 +168,17 @@ public class SDG {
 		}
 	}
 
-	///If there is a match, it returns the already existing pdg. If not match, null is returned!
+	/// If there is a match, it returns the already existing pdg. If not match, null
+	/// is returned!
 	private HashMutablePDG getExistingPdg(HashMutablePDG pdg) {
 		HashMutablePDG existingPdg = null;
 		for (HashMutablePDG pdgCmp : connections.keySet()) {
-			if (pdgCmp.toString().equals(pdg.toString())) existingPdg = pdgCmp; //TODO: Not ideal to do such a long string comparison
+			if (pdgCmp.toString().equals(pdg.toString()))
+				existingPdg = pdgCmp; // TODO: Not ideal to do such a long string comparison
 		}
 		return existingPdg;
 	}
-	
+
 	private List<SdgEdge> findReturnEdges(HashMutablePDG fromPdg, HashMutablePDG toPdg, PDGNode callNode) {
 		List<SdgEdge> sdgEdges = new LinkedList<SdgEdge>();
 		Iterator i = fromPdg.iterator();
@@ -137,8 +189,10 @@ public class SDG {
 				Iterator<Unit> it = bl.iterator();
 				while (it.hasNext()) {
 					Unit u = (Unit) it.next();
-					if (u instanceof JRetStmt || u instanceof JReturnStmt)
+					if (u instanceof JRetStmt || u instanceof JReturnStmt) {
+						System.out.println("Return statement: " + u);
 						sdgEdges.add(new SdgEdge(node, callNode, EdgeType.RET, fromPdg, toPdg));
+					}
 				}
 			}
 		}
