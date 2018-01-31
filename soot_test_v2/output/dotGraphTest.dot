@@ -1,22 +1,9 @@
 digraph "System Dependence Graph" {
     compound=true;
-    subgraph "cluster_614021571" {
+    subgraph "cluster_1048521543" {
         label="<test.MyClass: int foo(int)>";
         fontsize=40;
         fontcolor=blue;
-<<<<<<< HEAD
-        "967741809" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \ni0 := @parameter0: int\n$i1 = staticinvoke <test.MyClass: int bar()>()\ni2 = 1 + $i1\ni3 = i2 + i0\nif i2 <= i3 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "234473260" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\ni0 := @parameter0: int;\n$i1 = staticinvoke <test.MyClass: int bar()>();\ni2 = 1 + $i1;\ni3 = i2 + i0;\nif i2 <= i3 goto return 2;\n",];
-        "967741809"->"234473260";
-        "2145588569" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i4 = staticinvoke <test.MyClass: int bar()>()\nreturn $i4\nEnd of PDG Region 1 -----------------------------\n",];
-        "234473260"->"2145588569";
-        "1356181503" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
-        "234473260"->"1356181503";
-        "1136575952" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i4 = staticinvoke <test.MyClass: int bar()>();\nreturn $i4;\n",];
-        "2145588569"->"1136575952";
-        "564985199" [label="Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
-        "1356181503"->"564985199";
-=======
         subgraph "cluster_514625830" {
             label="";
             color=grey;
@@ -72,128 +59,5 @@ digraph "System Dependence Graph" {
         }
         "StartNode2027897550"
         "StartNode1438134118"->"StartNode2027897550" [label="c",ltail=cluster_1438134118,lhead=cluster_2027897550,];
->>>>>>> 1cfd6fc2dc75c7987f08d116f61952321aabf815
     }
-    subgraph "cluster_684711605" {
-        label="<test.MyClass: int bar()>";
-        fontsize=40;
-        fontcolor=blue;
-<<<<<<< HEAD
-        "617225781" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1)\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2)\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3)\n$i6 = $i4 + $i5\nreturn $i6\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "256809018" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0);\n",];
-        "617225781"->"256809018";
-        "1693248094" [label="Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0);\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1);\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2);\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3);\n$i6 = $i4 + $i5;\nreturn $i6;\n",];
-        "617225781"->"1693248094";
-        "435807252" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
-        "256809018"->"435807252";
-        "2114909461" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
-        "435807252"->"2114909461";
-    }
-    subgraph "cluster_<test.MyClass: int calc(int)>" {
-        label="<test.MyClass: int calc(int)>";
-        fontsize=40;
-        fontcolor=blue;
-        "219230684" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \ni0 := @parameter0: int\ni1 = i0 + 2\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "572247323" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\ni0 := @parameter0: int;\ni1 = i0 + 2;\nreturn i1;\n",];
-        "219230684"->"572247323";
-    }
-    "1136575952"
-    "617225781"
-    "1136575952"->"617225781" [label="CALL",];
-    "1693248094"
-    "1693248094"->"1136575952" [label="RET",];
-    "234473260"
-    "234473260"->"617225781" [label="CALL",];
-    "1693248094"->"234473260" [label="RET",];
-    "219230684"
-    "1693248094"->"219230684" [label="PARAM",];
-    "572247323"
-    "572247323"->"1693248094" [label="RET",];
-    "1693248094"->"219230684" [label="PARAM",];
-    "572247323"->"1693248094" [label="RET",];
-    "1693248094"->"219230684" [label="PARAM",];
-    "572247323"->"1693248094" [label="RET",];
-    "1693248094"->"219230684" [label="PARAM",];
-    "572247323"->"1693248094" [label="RET",];
-=======
-        subgraph "cluster_333098001" {
-            label="";
-            color=grey;
-            "StartNode333098001" [label="Type: REGION: 0",shape=plaintext,];
-        }
-        subgraph "cluster_790545639" {
-            label="";
-            "StartNode790545639" [label="Type: CFGNODE: Block #0",shape=plaintext,];
-            "117086119" [label="b0 = 1",];
-            "248093528" [label="i1 = 0",];
-            "1893489817" [label="if b0 >= 2 goto staticinvoke <test.MyClass: void calc(int)>(b0)",];
-        }
-        "117086119"
-        "1893489817"
-        "117086119"->"1893489817" [label="D_b0",];
-        "StartNode333098001"
-        "StartNode790545639"
-        "StartNode333098001"->"StartNode790545639" [label="c",ltail=cluster_333098001,lhead=cluster_790545639,];
-        subgraph "cluster_572247323" {
-            label="";
-            "StartNode572247323" [label="Type: CFGNODE: Block #2",shape=plaintext,];
-            "1196102912" [label="staticinvoke <test.MyClass: void calc(int)>(b0)",];
-            "936475131" [label="return i1",];
-        }
-        "1196102912"
-        "117086119"->"1196102912" [label="D_b0",];
-        "248093528"
-        "936475131"
-        "248093528"->"936475131" [label="D_i1",];
-        "StartNode572247323"
-        "StartNode333098001"->"StartNode572247323" [label="c",ltail=cluster_333098001,lhead=cluster_572247323,];
-        subgraph "cluster_1675651383" {
-            label="";
-            color=grey;
-            "StartNode1675651383" [label="Type: REGION: 1",shape=plaintext,];
-        }
-        "StartNode1675651383"
-        "StartNode790545639"->"StartNode1675651383" [label="c",ltail=cluster_790545639,lhead=cluster_1675651383,];
-        subgraph "cluster_1328986395" {
-            label="";
-            "StartNode1328986395" [label="Type: CFGNODE: Block #1",shape=plaintext,];
-            "308474577" [label="i1 = 2 * b0",];
-        }
-        "308474577"
-        "117086119"->"308474577" [label="D_b0",];
-        "StartNode1328986395"
-        "StartNode1675651383"->"StartNode1328986395" [label="c",ltail=cluster_1675651383,lhead=cluster_1328986395,];
-    }
-    subgraph "cluster_472236880" {
-        label="<test.MyClass: void calc(int)>";
-        fontsize=40;
-        fontcolor=blue;
-        subgraph "cluster_80868495" {
-            label="";
-            color=grey;
-            "StartNode80868495" [label="Type: REGION: 0",shape=plaintext,];
-        }
-        subgraph "cluster_2067525741" {
-            label="";
-            "StartNode2067525741" [label="Type: CFGNODE: Block #0",shape=plaintext,];
-            "630932897" [label="i0 := @parameter0: int",];
-            "953255194" [label="i1 = 1 + i0",];
-            "1132038938" [label="return",];
-        }
-        "630932897"
-        "953255194"
-        "630932897"->"953255194" [label="D_i0",];
-        "StartNode80868495"
-        "StartNode2067525741"
-        "StartNode80868495"->"StartNode2067525741" [label="c",ltail=cluster_80868495,lhead=cluster_2067525741,];
-    }
-    "1132101395"
-    "StartNode333098001"
-    "1132101395"->"StartNode333098001" [lhead=cluster_684711605,label="CALL",];
-    "936475131"
-    "936475131"->"1132101395" [label="RET",ltail=cluster_684711605,];
-    "1196102912"
-    "StartNode80868495"
-    "1196102912"->"StartNode80868495" [lhead=cluster_472236880,label="PARAM",];
->>>>>>> 1cfd6fc2dc75c7987f08d116f61952321aabf815
 }

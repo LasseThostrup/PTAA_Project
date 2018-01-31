@@ -9,8 +9,8 @@ public class MyClass {
 		// ArrayList<Integer> asd = new ArrayList<Integer>();
 		// asd.add(1);
 		// asd.add(2);
-		int a = 2;
-		foo(a);
+//		int a = 2;
+//		foo(a);
 	}
 
 	public static int foo(int c) {

@@ -43,12 +43,32 @@ public class SDG {
 		Options.v().no_bodies_for_excluded();
 
 		Options.v().set_whole_program(true);
+		
 
 		Scene.v().addBasicClass("java.lang.Object", 3);
+		
+		/*
+		 * args = "-p cg enabled:true -w -no-bodies-for-excluded -full-resolver -process-dir PATH_TO_BIN"
+		 * 
+		 * create transformer
+		 * 			create your own class blabla that extends SceneTransformer
+		 * 				Scene.v().getClasses
+		 * 							class.getmethods
+		 * 				
+		Options.v().set_process_dir(setting);
+		 * 			
+		 * add trans to pack manager
+		 * PackManager.getPack("cg/wjtp").add(new Transfomer("name", blabla))
+		 *  soot.Main.main(args.split(" "))"
+		 * 
+		 * 
+			if the user should set the entry points:	Scene.v().setEntryPoints();
+		 * */
 
 		Scene s = Scene.v();
 
 		SootClass c = s.loadClassAndSupport(class_);
+		
 
 		c.setApplicationClass();
 
