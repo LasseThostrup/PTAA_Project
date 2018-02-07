@@ -1,58 +1,78 @@
 digraph "System Dependence Graph" {
-    subgraph "cluster_<test.MyClass: int foo(int)>" {
-        label="<test.MyClass: int foo(int)>";
+    compound=true;
+    subgraph "cluster_9169170" {
+        label="<LibrarianSuccess: void main(java.lang.String[])>";
         fontsize=40;
         fontcolor=blue;
-        "194953444" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, 2, \nUnits are: \ni0 := @parameter0: int\n$i1 = staticinvoke <test.MyClass: int bar()>()\ni2 = 1 + $i1\ni3 = i2 + i0\nif i2 <= i3 goto return 2\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1683343791" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\ni0 := @parameter0: int;\n$i1 = staticinvoke <test.MyClass: int bar()>();\ni2 = 1 + $i1;\ni3 = i2 + i0;\nif i2 <= i3 goto return 2;\n",];
-        "194953444"->"1683343791";
-        "1210243774" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \n$i4 = staticinvoke <test.MyClass: int bar()>()\nreturn $i4\nEnd of PDG Region 1 -----------------------------\n",];
-        "1683343791"->"1210243774";
-        "313528243" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  2-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \nreturn 2\nEnd of PDG Region 2 -----------------------------\n",];
-        "1683343791"->"313528243";
-        "148729716" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: ]\n$i4 = staticinvoke <test.MyClass: int bar()>();\nreturn $i4;\n",];
-        "1210243774"->"148729716";
-        "29371704" [label="Type: CFGNODE: Block 2:\n[preds: 0 ] [succs: ]\nreturn 2;\n",];
-        "313528243"->"29371704";
+        subgraph "cluster_2116616608" {
+            label="";
+            color=grey;
+            "StartNode2116616608" [label="Type: REGION: 0",shape=plaintext,];
+        }
+        subgraph "cluster_2068909690" {
+            label="";
+            "StartNode2068909690" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "1732554964" [label="r0 := @parameter0: java.lang.String[]",];
+            "717040670" [label="$r1 = new LibrarianSuccess$1",];
+            "888060389" [label="specialinvoke $r1.<LibrarianSuccess$1: void <init>()>()",];
+            "1603310594" [label="staticinvoke <java.awt.EventQueue: void invokeLater(java.lang.Runnable)>($r1)",];
+            "2027146681" [label="return",];
+        }
+        "717040670"
+        "888060389"
+        "717040670"->"888060389" [label="D_$r1",];
+        "1603310594"
+        "717040670"->"1603310594" [label="D_$r1",];
+        "StartNode2116616608"
+        "StartNode2068909690"
+        "StartNode2116616608"->"StartNode2068909690" [label="c",ltail=cluster_2116616608,lhead=cluster_2068909690,];
     }
-    subgraph "cluster_<test.MyClass: int bar()>" {
-        label="<test.MyClass: int bar()>";
+    subgraph "cluster_858011639" {
+        label="<LibrarianSuccess$1: void <init>()>";
         fontsize=40;
         fontcolor=blue;
-        "1143666326" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: 1, \nUnits are: \nb0 = 1\ni1 = 0\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0)\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1)\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2)\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3)\n$i6 = $i4 + $i5\nreturn $i6\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1590941584" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: 1 2 ]\nb0 = 1;\ni1 = 0;\nif b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0);\n",];
-        "1143666326"->"1590941584";
-        "368930216" [label="Type: CFGNODE: Block 2:\n[preds: 0 1 ] [succs: ]\ni2 = staticinvoke <test.MyClass: int calc(int)>(b0);\ni3 = staticinvoke <test.MyClass: int calc(int)>(i1);\n$i4 = staticinvoke <test.MyClass: int calc(int)>(i2);\n$i5 = staticinvoke <test.MyClass: int calc(int)>(i3);\n$i6 = $i4 + $i5;\nreturn $i6;\n",];
-        "1143666326"->"368930216";
-        "52281177" [style=filled,label="Type: REGION: Begin-----------PDGRegion:  1-------------\nParent is: 0----\nChildren Regions are: \nUnits are: \ni1 = 2 * b0\nEnd of PDG Region 1 -----------------------------\n",];
-        "1590941584"->"52281177";
-        "824851423" [label="Type: CFGNODE: Block 1:\n[preds: 0 ] [succs: 2 ]\ni1 = 2 * b0;\n",];
-        "52281177"->"824851423";
+        subgraph "cluster_732095806" {
+            label="";
+            color=grey;
+            "StartNode732095806" [label="Type: REGION: 0",shape=plaintext,];
+        }
+        subgraph "cluster_64700533" {
+            label="";
+            "StartNode64700533" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "763276958" [label="r0 := @this: LibrarianSuccess$1",];
+            "1709320528" [label="specialinvoke r0.<java.lang.Object: void <init>()>()",];
+            "1661368177" [label="return",];
+        }
+        "763276958"
+        "1709320528"
+        "763276958"->"1709320528" [label="D_r0",];
+        "StartNode732095806"
+        "StartNode64700533"
+        "StartNode732095806"->"StartNode64700533" [label="c",ltail=cluster_732095806,lhead=cluster_64700533,];
     }
-    subgraph "cluster_<test.MyClass: int calc(int)>" {
-        label="<test.MyClass: int calc(int)>";
+    subgraph "cluster_1240209240" {
+        label="<java.lang.Object: void <init>()>";
         fontsize=40;
         fontcolor=blue;
-        "1446896304" [label="Type: REGION: Begin-----------PDGRegion:  0-------------\nChildren Regions are: \nUnits are: \ni0 := @parameter0: int\ni1 = i0 + 2\nreturn i1\nEnd of PDG Region 0 -----------------------------\n",style=filled,];
-        "1075206963" [label="Type: CFGNODE: Block 0:\n[preds: ] [succs: ]\ni0 := @parameter0: int;\ni1 = i0 + 2;\nreturn i1;\n",];
-        "1446896304"->"1075206963";
+        subgraph "cluster_419087520" {
+            label="";
+            color=grey;
+            "StartNode419087520" [label="Type: REGION: 0",shape=plaintext,];
+        }
+        subgraph "cluster_900235765" {
+            label="";
+            "StartNode900235765" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "329342726" [label="r0 := @this: java.lang.Object",];
+            "1197837563" [label="return",];
+        }
+        "StartNode419087520"
+        "StartNode900235765"
+        "StartNode419087520"->"StartNode900235765" [label="c",ltail=cluster_419087520,lhead=cluster_900235765,];
     }
-    "1683343791"
-    "1143666326"
-    "1683343791"->"1143666326" [label="CALL",];
-    "368930216"
-    "368930216"->"1683343791" [label="RET",];
-    "148729716"
-    "148729716"->"1143666326" [label="CALL",];
-    "368930216"->"148729716" [label="RET",];
-    "1446896304"
-    "368930216"->"1446896304" [label="PARAM",];
-    "1075206963"
-    "1075206963"->"368930216" [label="RET",];
-    "368930216"->"1446896304" [label="PARAM",];
-    "1075206963"->"368930216" [label="RET",];
-    "368930216"->"1446896304" [label="PARAM",];
-    "1075206963"->"368930216" [label="RET",];
-    "368930216"->"1446896304" [label="PARAM",];
-    "1075206963"->"368930216" [label="RET",];
+    "888060389"
+    "StartNode732095806"
+    "888060389"->"StartNode732095806" [lhead=cluster_858011639,label="CALL",];
+    "1709320528"
+    "StartNode419087520"
+    "1709320528"->"StartNode419087520" [lhead=cluster_1240209240,label="CALL",];
 }
