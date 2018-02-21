@@ -1,5 +1,6 @@
-package soot;
+package sdg;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -8,7 +9,15 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import soot.SootField;
+import soot.SootMethod;
+import soot.Unit;
+import soot.Value;
+import soot.ValueBox;
+import soot.jimple.FieldRef;
+import soot.jimple.internal.JIfStmt;
 import soot.jimple.internal.JimpleLocal;
+import soot.jimple.internal.StmtBox;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.pdg.HashMutablePDG;
 import soot.toolkits.graph.pdg.PDGNode;
@@ -20,10 +29,12 @@ public class SDG {
 
 	private LinkedHashMap<HashMutablePDG, List<SdgEdge>> connections;
 	private LinkedHashMap<String, Unit> defUnitMappings;
+	private ArrayList<SootField> sootFields; //List containing the class fields
 
 	public SDG() {
 		connections = new LinkedHashMap<HashMutablePDG, List<SdgEdge>>();
 		defUnitMappings = new LinkedHashMap<String, Unit>();
+		sootFields = new ArrayList<SootField>();
 	}
 
 	public LinkedHashMap<HashMutablePDG, List<SdgEdge>> getConnections() {
@@ -42,11 +53,26 @@ public class SDG {
 		this.defUnitMappings = defUnitMappings;
 	}
 
+	public ArrayList<SootField> getSootFields() {
+		return sootFields;
+	}
+
+	public void setSootFields(ArrayList<SootField> sootFields) {
+		this.sootFields = sootFields;
+	}
+
 	public DotGraph toDotGraph() {
 		// DotNamer namer = new DotNamer(1000, 0.7f);
 		DotGraph dot = new DotGraph("System Dependence Graph");
 		dot.setGraphAttribute("compound", "true");
-		int j = 0;
+		
+		//Draw all the fields
+		for (SootField sf : sootFields) { 
+			DotGraphNode sfNode = dot.drawNode("field" + sf.hashCode());
+			sfNode.setLabel(sf.toString());
+		}
+		
+		//Iterate all the pdgs, creating a sub graph for each
 		for (HashMutablePDG pdg : connections.keySet()) {
 			SootMethod method = pdg.getCFG().getBody().getMethod();
 			String name = method.getSignature();
@@ -54,6 +80,7 @@ public class SDG {
 			subGraph.setGraphLabel(name);
 			subGraph.setGraphAttribute("fontsize", "40");
 			subGraph.setGraphAttribute("fontcolor", "blue");
+			subGraph.setGraphAttribute("color", "blue");
 
 			PDGNode startNode = pdg.GetStartNode();
 			Queue<PDGNode> worklist = new LinkedList<PDGNode>();
@@ -61,8 +88,7 @@ public class SDG {
 
 			DotGraph startSubGraph = subGraph.createSubGraph("cluster_" + startNode.hashCode());
 			startSubGraph.setGraphLabel("");
-			// DotGraphNode succDotnode =
-			// subGraph.drawNode(String.valueOf(succ.hashCode()));
+			startSubGraph.setGraphAttribute("color", "darkgreen");
 			if (startNode.getType() == PDGNode.Type.REGION) {
 				startSubGraph.setGraphAttribute("color", "grey");
 			}
@@ -102,6 +128,7 @@ public class SDG {
 					if (!visited.contains(succ)) {
 						DotGraph cfgSubGraph = subGraph.createSubGraph("cluster_" + succ.hashCode());
 						cfgSubGraph.setGraphLabel("");
+						cfgSubGraph.setGraphAttribute("color", "darkgreen");
 						// DotGraphNode succDotnode =
 						// subGraph.drawNode(String.valueOf(succ.hashCode()));
 						if (succ.getType() == PDGNode.Type.REGION) {
@@ -122,6 +149,17 @@ public class SDG {
 								DotGraphNode uNode = cfgSubGraph.drawNode(String.valueOf(u.hashCode()));
 								uNode.setLabel(u.toString());
 
+								// Add control flow edges
+								if (u instanceof JIfStmt) {
+									Unit ifUnit = (JIfStmt)u;
+									Object pointsToBox = (ifUnit.getUnitBoxes().size() > 0 ? ifUnit.getUnitBoxes().get(0) : null);
+									if (pointsToBox instanceof StmtBox) {
+										Unit pointsToUnit = ((StmtBox) pointsToBox).getUnit();	
+										subGraph.drawEdge(String.valueOf(u.hashCode()),
+												String.valueOf(pointsToUnit.hashCode())).setLabel("C_true");
+									}
+								}
+								
 								// Add data dependency edges
 								List<ValueBox> useValueBoxes = u.getUseBoxes();
 								if (useValueBoxes != null) {
@@ -133,7 +171,13 @@ public class SDG {
 											if (edgeToUnit != null)
 												subGraph.drawEdge(String.valueOf(edgeToUnit.hashCode()),
 														String.valueOf(u.hashCode())).setLabel("D_" + varName);
-											;
+										} else if (v instanceof FieldRef) {
+											SootField sf = ((FieldRef) v).getField();
+											if (sootFields.contains(sf)) {
+												dot.drawEdge(String.valueOf("field" + sf.hashCode()),
+														String.valueOf(u.hashCode())).setLabel("D_" + sf.toString());
+											}
+											
 										}
 									}
 								}

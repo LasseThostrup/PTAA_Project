@@ -1,203 +1,191 @@
 digraph "System Dependence Graph" {
     compound=true;
-    subgraph "cluster_768298666" {
-        label="<test.MyClass: void main(java.lang.String[])>";
+    "field940553268" [label="<test.Recursion: int x>",];
+    subgraph "cluster_1702660825" {
+        label="<test.Recursion: void main(java.lang.String[])>";
         fontsize=40;
         fontcolor=blue;
-        subgraph "cluster_1527761599" {
+        color=blue;
+        subgraph "cluster_1493625803" {
             label="";
+            color=darkgreen;
             color=grey;
-            "StartNode1527761599" [label="Type: REGION: 0",shape=plaintext,];
+            "StartNode1493625803" [label="Type: REGION: 0",shape=plaintext,];
         }
-        subgraph "cluster_1165067644" {
+        subgraph "cluster_1866161430" {
             label="";
-            "StartNode1165067644" [label="Type: CFGNODE: Block #0",shape=plaintext,];
-            "756319399" [label="r0 := @parameter0: java.lang.String[]",];
-            "660380534" [label="b0 = 2",];
-            "389387596" [label="staticinvoke <test.MyClass: int foo(int)>(b0)",];
-            "901223406" [label="return",];
+            color=darkgreen;
+            "StartNode1866161430" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "1113619023" [label="r0 := @parameter0: java.lang.String[]",];
+            "1134612201" [label="$r1 = \"abc\"",];
+            "1415157681" [label="$z0 = virtualinvoke $r1.<java.lang.String: boolean contains(java.lang.CharSequence)>(\"a\")",];
+            "188576144" [label="if $z0 == 0 goto staticinvoke <java.lang.Integer: int compare(int,int)>(0, 1)",];
         }
-        "660380534"
-        "389387596"
-        "660380534"->"389387596" [label="D_b0",];
-        "StartNode1527761599"
-        "StartNode1165067644"
-        "StartNode1527761599"->"StartNode1165067644" [label="c",ltail=cluster_1527761599,lhead=cluster_1165067644,];
+        "1134612201"
+        "1415157681"
+        "1134612201"->"1415157681" [label="D_$r1",];
+        "188576144"
+        "1007309018"
+        "188576144"->"1007309018" [label="C_true",];
+        "1415157681"->"188576144" [label="D_$z0",];
+        "StartNode1493625803"
+        "StartNode1866161430"
+        "StartNode1493625803"->"StartNode1866161430" [label="c",ltail=cluster_1493625803,lhead=cluster_1866161430,];
+        subgraph "cluster_558922244" {
+            label="";
+            color=darkgreen;
+            "StartNode558922244" [label="Type: CFGNODE: Block #2",shape=plaintext,];
+            "1007309018" [label="staticinvoke <java.lang.Integer: int compare(int,int)>(0, 1)",];
+            "1640639994" [label="$r4 = new java.util.ArrayList",];
+            "323326911" [label="specialinvoke $r4.<java.util.ArrayList: void <init>()>()",];
+            "1270144618" [label="r2 = $r4",];
+            "275310919" [label="return",];
+        }
+        "1640639994"
+        "323326911"
+        "1640639994"->"323326911" [label="D_$r4",];
+        "1270144618"
+        "1640639994"->"1270144618" [label="D_$r4",];
+        "StartNode558922244"
+        "StartNode1493625803"->"StartNode558922244" [label="c",ltail=cluster_1493625803,lhead=cluster_558922244,];
+        subgraph "cluster_107241811" {
+            label="";
+            color=darkgreen;
+            color=grey;
+            "StartNode107241811" [label="Type: REGION: 1",shape=plaintext,];
+        }
+        "StartNode107241811"
+        "StartNode1866161430"->"StartNode107241811" [label="c",ltail=cluster_1866161430,lhead=cluster_107241811,];
+        subgraph "cluster_339099861" {
+            label="";
+            color=darkgreen;
+            "StartNode339099861" [label="Type: CFGNODE: Block #1",shape=plaintext,];
+            "1843289228" [label="$r3 = new test.Recursion",];
+            "1484531981" [label="specialinvoke $r3.<test.Recursion: void <init>()>()",];
+            "1366025231" [label="virtualinvoke $r3.<test.Recursion: int bar()>()",];
+        }
+        "1843289228"
+        "1484531981"
+        "1843289228"->"1484531981" [label="D_$r3",];
+        "1366025231"
+        "1843289228"->"1366025231" [label="D_$r3",];
+        "StartNode339099861"
+        "StartNode107241811"->"StartNode339099861" [label="c",ltail=cluster_107241811,lhead=cluster_339099861,];
     }
-    subgraph "cluster_551747060" {
-        label="<test.MyClass: int foo(int)>";
+    subgraph "cluster_330084561" {
+        label="<test.Recursion: void <init>()>";
         fontsize=40;
         fontcolor=blue;
-        subgraph "cluster_1111344480" {
+        color=blue;
+        subgraph "cluster_254749889" {
             label="";
+            color=darkgreen;
             color=grey;
-            "StartNode1111344480" [label="Type: REGION: 0",shape=plaintext,];
+            "StartNode254749889" [label="Type: REGION: 0",shape=plaintext,];
         }
-        subgraph "cluster_1889939499" {
+        subgraph "cluster_992802731" {
             label="";
-            "StartNode1889939499" [label="Type: CFGNODE: Block #0",shape=plaintext,];
-            "1080606248" [label="i0 := @parameter0: int",];
-            "1536751667" [label="$i1 = staticinvoke <test.MyClass: int bar()>()",];
-            "1224288553" [label="i2 = 1 + $i1",];
-            "742640292" [label="i3 = i2 + i0",];
-            "368984593" [label="if i2 <= i3 goto return 2",];
+            color=darkgreen;
+            "StartNode992802731" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "1489092624" [label="r0 := @this: test.Recursion",];
+            "1641313620" [label="specialinvoke r0.<java.lang.Object: void <init>()>()",];
+            "1477657879" [label="r0.<test.Recursion: int x> = 2",];
+            "1146147158" [label="return",];
         }
-        "1536751667"
-        "1224288553"
-        "1536751667"->"1224288553" [label="D_$i1",];
-        "742640292"
-        "1224288553"->"742640292" [label="D_i2",];
-        "1080606248"
-        "1080606248"->"742640292" [label="D_i0",];
-        "368984593"
-        "1224288553"->"368984593" [label="D_i2",];
-        "742640292"->"368984593" [label="D_i3",];
-        "StartNode1111344480"
-        "StartNode1889939499"
-        "StartNode1111344480"->"StartNode1889939499" [label="c",ltail=cluster_1111344480,lhead=cluster_1889939499,];
-        subgraph "cluster_908092984" {
-            label="";
-            color=grey;
-            "StartNode908092984" [label="Type: REGION: 1",shape=plaintext,];
-        }
-        "StartNode908092984"
-        "StartNode1889939499"->"StartNode908092984" [label="c",ltail=cluster_1889939499,lhead=cluster_908092984,];
-        subgraph "cluster_1167560342" {
-            label="";
-            color=grey;
-            "StartNode1167560342" [label="Type: REGION: 2",shape=plaintext,];
-        }
-        "StartNode1167560342"
-        "StartNode1889939499"->"StartNode1167560342" [label="c",ltail=cluster_1889939499,lhead=cluster_1167560342,];
-        subgraph "cluster_1628585355" {
-            label="";
-            "StartNode1628585355" [label="Type: CFGNODE: Block #1",shape=plaintext,];
-            "1693758218" [label="return 4",];
-        }
-        "StartNode1628585355"
-        "StartNode908092984"->"StartNode1628585355" [label="c",ltail=cluster_908092984,lhead=cluster_1628585355,];
-        subgraph "cluster_1954980470" {
-            label="";
-            "StartNode1954980470" [label="Type: CFGNODE: Block #2",shape=plaintext,];
-            "1385193059" [label="return 2",];
-        }
-        "StartNode1954980470"
-        "StartNode1167560342"->"StartNode1954980470" [label="c",ltail=cluster_1167560342,lhead=cluster_1954980470,];
+        "1489092624"
+        "1641313620"
+        "1489092624"->"1641313620" [label="D_r0",];
+        "1477657879"
+        "1489092624"->"1477657879" [label="D_r0",];
+        "StartNode254749889"
+        "StartNode992802731"
+        "StartNode254749889"->"StartNode992802731" [label="c",ltail=cluster_254749889,lhead=cluster_992802731,];
     }
-    subgraph "cluster_438859868" {
-        label="<test.MyClass: int bar()>";
+    subgraph "cluster_927327686" {
+        label="<test.Recursion: int bar()>";
         fontsize=40;
         fontcolor=blue;
-        subgraph "cluster_1841199413" {
+        color=blue;
+        subgraph "cluster_1572098393" {
             label="";
+            color=darkgreen;
             color=grey;
-            "StartNode1841199413" [label="Type: REGION: 0",shape=plaintext,];
+            "StartNode1572098393" [label="Type: REGION: 0",shape=plaintext,];
         }
-        subgraph "cluster_1471393624" {
+        subgraph "cluster_360062456" {
             label="";
-            "StartNode1471393624" [label="Type: CFGNODE: Block #0",shape=plaintext,];
-            "1176042022" [label="b0 = 1",];
-            "724339476" [label="i1 = 0",];
-            "1400964654" [label="if b0 >= 2 goto i2 = staticinvoke <test.MyClass: int calc(int)>(b0)",];
+            color=darkgreen;
+            "StartNode360062456" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "158453976" [label="r0 := @this: test.Recursion",];
+            "726281927" [label="$i0 = r0.<test.Recursion: int x>",];
+            "413601558" [label="if $i0 <= 0 goto $i4 = r0.<test.Recursion: int x>",];
         }
-        "1176042022"
-        "1400964654"
-        "1176042022"->"1400964654" [label="D_b0",];
-        "StartNode1841199413"
-        "StartNode1471393624"
-        "StartNode1841199413"->"StartNode1471393624" [label="c",ltail=cluster_1841199413,lhead=cluster_1471393624,];
-        subgraph "cluster_726359661" {
+        "158453976"
+        "726281927"
+        "158453976"->"726281927" [label="D_r0",];
+        "413601558"
+        "1151755506"
+        "413601558"->"1151755506" [label="C_true",];
+        "726281927"->"413601558" [label="D_$i0",];
+        "StartNode1572098393"
+        "StartNode360062456"
+        "StartNode1572098393"->"StartNode360062456" [label="c",ltail=cluster_1572098393,lhead=cluster_360062456,];
+        subgraph "cluster_1172131546" {
             label="";
-            "StartNode726359661" [label="Type: CFGNODE: Block #2",shape=plaintext,];
-            "170787506" [label="i2 = staticinvoke <test.MyClass: int calc(int)>(b0)",];
-            "1069481582" [label="i3 = staticinvoke <test.MyClass: int calc(int)>(i1)",];
-            "1623785991" [label="$i4 = staticinvoke <test.MyClass: int calc(int)>(i2)",];
-            "1447402360" [label="$i5 = staticinvoke <test.MyClass: int calc(int)>(i3)",];
-            "1944194951" [label="$i6 = $i4 + $i5",];
-            "2120852352" [label="return $i6",];
+            color=darkgreen;
+            "StartNode1172131546" [label="Type: CFGNODE: Block #2",shape=plaintext,];
+            "1151755506" [label="$i4 = r0.<test.Recursion: int x>",];
+            "1663619914" [label="return $i4",];
         }
-        "170787506"
-        "1176042022"->"170787506" [label="D_b0",];
-        "724339476"
-        "1069481582"
-        "724339476"->"1069481582" [label="D_i1",];
-        "1623785991"
-        "170787506"->"1623785991" [label="D_i2",];
-        "1447402360"
-        "1069481582"->"1447402360" [label="D_i3",];
-        "1944194951"
-        "1623785991"->"1944194951" [label="D_$i4",];
-        "1447402360"->"1944194951" [label="D_$i5",];
-        "2120852352"
-        "1944194951"->"2120852352" [label="D_$i6",];
-        "StartNode726359661"
-        "StartNode1841199413"->"StartNode726359661" [label="c",ltail=cluster_1841199413,lhead=cluster_726359661,];
-        subgraph "cluster_1694187662" {
+        "158453976"->"1151755506" [label="D_r0",];
+        "1663619914"
+        "1151755506"->"1663619914" [label="D_$i4",];
+        "StartNode1172131546"
+        "StartNode1572098393"->"StartNode1172131546" [label="c",ltail=cluster_1572098393,lhead=cluster_1172131546,];
+        subgraph "cluster_846947180" {
             label="";
+            color=darkgreen;
             color=grey;
-            "StartNode1694187662" [label="Type: REGION: 1",shape=plaintext,];
+            "StartNode846947180" [label="Type: REGION: 1",shape=plaintext,];
         }
-        "StartNode1694187662"
-        "StartNode1471393624"->"StartNode1694187662" [label="c",ltail=cluster_1471393624,lhead=cluster_1694187662,];
-        subgraph "cluster_1629772879" {
+        "StartNode846947180"
+        "StartNode360062456"->"StartNode846947180" [label="c",ltail=cluster_360062456,lhead=cluster_846947180,];
+        subgraph "cluster_1616974404" {
             label="";
-            "StartNode1629772879" [label="Type: CFGNODE: Block #1",shape=plaintext,];
-            "1293430302" [label="i1 = 2 * b0",];
+            color=darkgreen;
+            "StartNode1616974404" [label="Type: CFGNODE: Block #1",shape=plaintext,];
+            "1652149987" [label="$i1 = r0.<test.Recursion: int x>",];
+            "1300393335" [label="$i2 = $i1 - 1",];
+            "1627428162" [label="r0.<test.Recursion: int x> = $i2",];
+            "558187323" [label="virtualinvoke r0.<test.Recursion: int bar()>()",];
         }
-        "1293430302"
-        "1176042022"->"1293430302" [label="D_b0",];
-        "StartNode1629772879"
-        "StartNode1694187662"->"StartNode1629772879" [label="c",ltail=cluster_1694187662,lhead=cluster_1629772879,];
+        "1652149987"
+        "158453976"->"1652149987" [label="D_r0",];
+        "1300393335"
+        "1652149987"->"1300393335" [label="D_$i1",];
+        "1627428162"
+        "158453976"->"1627428162" [label="D_r0",];
+        "1300393335"->"1627428162" [label="D_$i2",];
+        "558187323"
+        "158453976"->"558187323" [label="D_r0",];
+        "StartNode1616974404"
+        "StartNode846947180"->"StartNode1616974404" [label="c",ltail=cluster_846947180,lhead=cluster_1616974404,];
     }
-    subgraph "cluster_1042451367" {
-        label="<test.MyClass: int calc(int)>";
-        fontsize=40;
-        fontcolor=blue;
-        subgraph "cluster_733412700" {
-            label="";
-            color=grey;
-            "StartNode733412700" [label="Type: REGION: 0",shape=plaintext,];
-        }
-        subgraph "cluster_760440152" {
-            label="";
-            "StartNode760440152" [label="Type: CFGNODE: Block #0",shape=plaintext,];
-            "108175856" [label="i0 := @parameter0: int",];
-            "1130872444" [label="$i1 = 1 + i0",];
-            "1342890358" [label="return $i1",];
-        }
-        "108175856"
-        "1130872444"
-        "108175856"->"1130872444" [label="D_i0",];
-        "1342890358"
-        "1130872444"->"1342890358" [label="D_$i1",];
-        "StartNode733412700"
-        "StartNode760440152"
-        "StartNode733412700"->"StartNode760440152" [label="c",ltail=cluster_733412700,lhead=cluster_760440152,];
-    }
-    "389387596"
-    "StartNode1111344480"
-    "389387596"->"StartNode1111344480" [lhead=cluster_551747060,label="PARAM",];
-    "1693758218"
-    "1693758218"->"389387596" [label="RET",];
-    "1385193059"
-    "1385193059"->"389387596" [label="RET",];
-    "1536751667"
-    "StartNode1841199413"
-    "1536751667"->"StartNode1841199413" [lhead=cluster_438859868,label="CALL",];
-    "2120852352"
-    "2120852352"->"1536751667" [label="RET",];
-    "170787506"
-    "StartNode733412700"
-    "170787506"->"StartNode733412700" [lhead=cluster_1042451367,label="PARAM",];
-    "1342890358"
-    "1342890358"->"170787506" [label="RET",];
-    "1069481582"
-    "1069481582"->"StartNode733412700" [lhead=cluster_1042451367,label="PARAM",];
-    "1342890358"->"1069481582" [label="RET",];
-    "1623785991"
-    "1623785991"->"StartNode733412700" [lhead=cluster_1042451367,label="PARAM",];
-    "1342890358"->"1623785991" [label="RET",];
-    "1447402360"
-    "1447402360"->"StartNode733412700" [lhead=cluster_1042451367,label="PARAM",];
-    "1342890358"->"1447402360" [label="RET",];
+    "726281927"
+    "field940553268"->"726281927" [label="D_<test.Recursion: int x>",];
+    "1151755506"
+    "field940553268"->"1151755506" [label="D_<test.Recursion: int x>",];
+    "1652149987"
+    "field940553268"->"1652149987" [label="D_<test.Recursion: int x>",];
+    "1484531981"
+    "StartNode254749889"
+    "1484531981"->"StartNode254749889" [lhead=cluster_330084561,label="CALL",];
+    "1366025231"
+    "StartNode1572098393"
+    "1366025231"->"StartNode1572098393" [lhead=cluster_927327686,label="CALL",];
+    "1663619914"
+    "1663619914"->"1366025231" [label="RET",];
+    "558187323"
+    "558187323"->"StartNode1572098393" [lhead=cluster_927327686,label="CALL",];
+    "1663619914"->"558187323" [label="RET",];
 }

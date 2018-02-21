@@ -1,4 +1,4 @@
-package soot;
+package sdg;
 
 public enum EdgeType {
 	CALL,

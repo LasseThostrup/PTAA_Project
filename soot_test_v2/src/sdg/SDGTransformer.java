@@ -1,4 +1,4 @@
-package soot;
+package sdg;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -6,6 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import soot.Body;
+import soot.Scene;
+import soot.SceneTransformer;
+import soot.SootField;
+import soot.SootMethod;
+import soot.Unit;
+import soot.Value;
+import soot.ValueBox;
+import soot.jimple.FieldRef;
 import soot.jimple.internal.JRetStmt;
 import soot.jimple.internal.JReturnStmt;
 import soot.jimple.internal.JimpleLocal;
@@ -48,25 +57,14 @@ public class SDGTransformer extends SceneTransformer {
 			Value v = vb.getValue();
 			if (v instanceof JimpleLocal)
 				sdg.getDefUnitMappings().put(name + ((JimpleLocal) v).getName(), u);
+			else if (v instanceof FieldRef) {
+				SootField sf = ((FieldRef) v).getField();
+				if (!sdg.getSootFields().contains(sf)) sdg.getSootFields().add(sf);
+				sdg.getDefUnitMappings().put(sf.toString(), u);
+			}
 		}
 
 	}
-
-	/*
-	 * args =
-	 * "-p cg enabled:true -w -no-bodies-for-excluded -full-resolver -process-dir PATH_TO_BIN"
-	 * 
-	 * create transformer create your own class blabla that extends SceneTransformer
-	 * Scene.v().getClasses class.getmethods
-	 * 
-	 * Options.v().set_process_dir(setting);
-	 * 
-	 * add trans to pack manager PackManager.getPack("cg/wjtp").add(new
-	 * Transfomer("name", blabla)) soot.Main.main(args.split(" "))"
-	 * 
-	 * 
-	 * if the user should set the entry points: Scene.v().setEntryPoints();
-	 */
 
 	@SuppressWarnings("rawtypes")
 	private void iteratePdg(HashMutablePDG pdg) {
@@ -91,11 +89,11 @@ public class SDGTransformer extends SceneTransformer {
 					Unit u = (Unit) it.next();
 
 					addDefinitionToUnitMapping(name, u);
-
 					Iterator<Edge> outGoingEdges = cg.edgesOutOf(u);
 
 					while (outGoingEdges.hasNext()) {
 						Edge edge = outGoingEdges.next();
+						
 						if (!edge.isClinit()) {
 							if (!edge.tgt().isConcrete())
 								continue;
