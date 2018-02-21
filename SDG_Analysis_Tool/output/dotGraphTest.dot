@@ -1,0 +1,113 @@
+digraph "System Dependence Graph" {
+    compound=true;
+    "field940553268" [label="<test.OuterClass$InnerClass: test.OuterClass this$0>",];
+    subgraph "cluster_1663619914" {
+        label="<test.OuterClass: void main(java.lang.String[])>";
+        fontsize=40;
+        fontcolor=blue;
+        color=blue;
+        subgraph "cluster_2011791487" {
+            label="";
+            color=darkgreen;
+            color=grey;
+            "StartNode2011791487" [label="Type: REGION: 0",shape=plaintext,];
+        }
+        subgraph "cluster_439928219" {
+            label="";
+            color=darkgreen;
+            "StartNode439928219" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "1682463303" [label="r0 := @parameter0: java.lang.String[]",];
+            "1739876329" [label="$r1 = new test.OuterClass",];
+            "385337537" [label="specialinvoke $r1.<test.OuterClass: void <init>()>()",];
+            "265119009" [label="return",];
+        }
+        "1739876329"
+        "385337537"
+        "1739876329"->"385337537" [label="D_$r1",];
+        "StartNode2011791487"
+        "StartNode439928219"
+        "StartNode2011791487"->"StartNode439928219" [label="C",ltail=cluster_2011791487,lhead=cluster_439928219,];
+    }
+    subgraph "cluster_1860250540" {
+        label="<test.OuterClass: void <init>()>";
+        fontsize=40;
+        fontcolor=blue;
+        color=blue;
+        subgraph "cluster_364604394" {
+            label="";
+            color=darkgreen;
+            color=grey;
+            "StartNode364604394" [label="Type: REGION: 0",shape=plaintext,];
+        }
+        subgraph "cluster_758013696" {
+            label="";
+            color=darkgreen;
+            "StartNode758013696" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "1891546521" [label="r0 := @this: test.OuterClass",];
+            "849373393" [label="specialinvoke r0.<java.lang.Object: void <init>()>()",];
+            "1906808037" [label="$r1 = <java.lang.System: java.io.PrintStream out>",];
+            "300031246" [label="virtualinvoke $r1.<java.io.PrintStream: void println(java.lang.String)>(\"Constructor of outer class\")",];
+            "500179317" [label="$r2 = new test.OuterClass$InnerClass",];
+            "1048027629" [label="specialinvoke $r2.<test.OuterClass$InnerClass: void <init>(test.OuterClass)>(r0)",];
+            "1073533248" [label="return",];
+        }
+        "1891546521"
+        "849373393"
+        "1891546521"->"849373393" [label="D_r0",];
+        "1906808037"
+        "300031246"
+        "1906808037"->"300031246" [label="D_$r1",];
+        "500179317"
+        "1048027629"
+        "500179317"->"1048027629" [label="D_$r2",];
+        "1891546521"->"1048027629" [label="D_r0",];
+        "StartNode364604394"
+        "StartNode758013696"
+        "StartNode364604394"->"StartNode758013696" [label="C",ltail=cluster_364604394,lhead=cluster_758013696,];
+    }
+    subgraph "cluster_1381965390" {
+        label="<test.OuterClass$InnerClass: void <init>(test.OuterClass)>";
+        fontsize=40;
+        fontcolor=blue;
+        color=blue;
+        subgraph "cluster_1690859824" {
+            label="";
+            color=darkgreen;
+            color=grey;
+            "StartNode1690859824" [label="Type: REGION: 0",shape=plaintext,];
+        }
+        subgraph "cluster_660017404" {
+            label="";
+            color=darkgreen;
+            "StartNode660017404" [label="Type: CFGNODE: Block #0",shape=plaintext,];
+            "1795960102" [label="r0 := @this: test.OuterClass$InnerClass",];
+            "1027591600" [label="r1 := @parameter0: test.OuterClass",];
+            "943081537" [label="r0.<test.OuterClass$InnerClass: test.OuterClass this$0> = r1",];
+            "1500608548" [label="specialinvoke r0.<java.lang.Object: void <init>()>()",];
+            "341853399" [label="$r2 = <java.lang.System: java.io.PrintStream out>",];
+            "366590980" [label="virtualinvoke $r2.<java.io.PrintStream: void println(java.lang.String)>(\"Constructor of inner class\")",];
+            "1195067075" [label="return",];
+        }
+        "1795960102"
+        "943081537"
+        "1795960102"->"943081537" [label="D_r0",];
+        "1027591600"
+        "1027591600"->"943081537" [label="D_r1",];
+        "1500608548"
+        "1795960102"->"1500608548" [label="D_r0",];
+        "341853399"
+        "366590980"
+        "341853399"->"366590980" [label="D_$r2",];
+        "StartNode1690859824"
+        "StartNode660017404"
+        "StartNode1690859824"->"StartNode660017404" [label="C",ltail=cluster_1690859824,lhead=cluster_660017404,];
+    }
+    "943081537"
+    "943081537"->"field940553268" [label="D_<test.OuterClass$InnerClass: test.OuterClass this$0>",];
+    "385337537"
+    "StartNode364604394"
+    "385337537"->"StartNode364604394" [label="CALL",];
+    "1048027629"
+    "StartNode1690859824"
+    "1048027629"->"StartNode1690859824" [label="PARAM",];
+}
